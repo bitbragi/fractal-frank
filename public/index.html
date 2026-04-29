@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
     <title>Frank — Your OP_CAT AI Instructor | Fractal Bitcoin</title>
     <meta name="description" content="Frank is the AI-powered MCP server for building covenants on Fractal Bitcoin. Powers the Scribe Protocol for programmable digital rights.">
     <meta property="og:title" content="Frank — Your OP_CAT AI Instructor">
     <meta property="og:description" content="Build covenants on Fractal Bitcoin with AI assistance. Powers the Scribe Protocol.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://frank.scribe.spot">
+    <meta property="og:image" content="https://frank.scribe.spot/img/scribe-logo.png">
+    <link rel="icon" href="/img/scribe-logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="/img/scribe-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,654 +26,895 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        'fractal': {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
-                            200: '#99f6e4',
-                            300: '#5eead4',
-                            400: '#2dd4bf',
-                            500: '#14b8a6',
-                            600: '#0d9488',
-                            700: '#0f766e',
-                            800: '#115e59',
-                            900: '#134e4a',
-                            950: '#042f2e',
-                        },
-                        'scribe': {
-                            50: '#fdf4ff',
-                            100: '#fae8ff',
-                            200: '#f5d0fe',
-                            300: '#f0abfc',
-                            400: '#e879f9',
-                            500: '#d946ef',
-                            600: '#c026d3',
-                            700: '#a21caf',
-                            800: '#86198f',
-                            900: '#701a75',
-                            950: '#4a044e',
-                        },
-                        'bitcoin': {
-                            400: '#f7931a',
-                            500: '#f2a900',
-                            600: '#e89c00',
-                        }
+                        gold:  { 300:'#ffd166', 400:'#ffbc03', 500:'#ebb94c' },
+                        flame: { 300:'#ffa552', 400:'#f96c04', 500:'#f16f24', 600:'#d35a10' },
+                        sky:   { 400:'#6680ff', 500:'#2864db' },
                     },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'gradient': 'gradient 8s ease infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        gradient: {
-                            '0%, 100%': { backgroundPosition: '0% 50%' },
-                            '50%': { backgroundPosition: '100% 50%' },
-                        }
-                    }
                 }
             }
         }
     </script>
     <style>
+        :root {
+            --bg: #000;
+            --surface-3:  rgba(255,255,255,.03);
+            --surface-5:  rgba(255,255,255,.05);
+            --surface-10: rgba(255,255,255,.10);
+            --border-soft: rgba(255,255,255,.08);
+            --gold: #ffbc03;
+            --gold-hover: #ebb94c;
+            --flame: #f16f24;
+            --flame-bright: #f96c04;
+            --sky: #6680ff;
+            --sky-deep: #2864db;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
         body {
-            background: #0a0a0b;
-            color: #fafafa;
+            background: var(--bg);
+            color: #fff;
+            overflow-x: hidden;
+            font-feature-settings: "ss01", "cv11";
         }
 
-        .gradient-bg {
-            background: linear-gradient(135deg, #0d9488 0%, #7c3aed 50%, #c026d3 100%);
-            background-size: 200% 200%;
-            animation: gradient 8s ease infinite;
+        /* ===================== TYPOGRAPHY ===================== */
+        .display-1 {
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -.025em;
+            font-size: clamp(2.75rem, 11.5vw, 6.75rem);
+        }
+        .display-2 {
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -.02em;
+            font-size: clamp(1.875rem, 6.5vw, 3.25rem);
+        }
+        .display-3 {
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: -.015em;
+            font-size: clamp(1.25rem, 4vw, 1.75rem);
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #2dd4bf 0%, #a78bfa 50%, #e879f9 100%);
+        .gold-orange-grad {
+            background: linear-gradient(180deg, #ffbc03 19.11%, #f16f24 50.37%, #f96c04 90%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .tagline-grad {
+            background: linear-gradient(90deg, #f96c04 34%, #6680ff 69.91%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .gradient-border {
-            position: relative;
-            background: #18181b;
-            border-radius: 16px;
-        }
-        .gradient-border::before {
-            content: '';
+        /* Hero outline echo */
+        .hero-outline {
             position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            padding: 1px;
-            background: linear-gradient(135deg, #2dd4bf, #a78bfa, #e879f9);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
+            top: 6px; left: 0; right: 0;
+            -webkit-text-stroke: 1px hsla(0,0%,100%,.16);
+            color: transparent;
+            z-index: -1;
             pointer-events: none;
+            user-select: none;
         }
 
-        .glow-fractal {
-            box-shadow: 0 0 60px rgba(20, 184, 166, 0.3);
+        /* ===================== SURFACES ===================== */
+        .surface, .surface-strong, .card-blue, .card-flame {
+            border-radius: 22px;
+        }
+        @media (min-width: 768px) {
+            .surface, .surface-strong, .card-blue, .card-flame {
+                border-radius: 28px;
+            }
+        }
+        .surface {
+            background: linear-gradient(180deg, rgba(255,255,255,.055) 0%, rgba(255,255,255,.025) 100%);
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.06),
+                0 8px 24px rgba(0,0,0,.35);
+            transition:
+                transform .45s cubic-bezier(.2,.8,.2,1),
+                border-color .35s ease,
+                box-shadow .45s cubic-bezier(.2,.8,.2,1),
+                background .35s ease;
+        }
+        .surface:hover {
+            background: linear-gradient(180deg, rgba(255,188,3,.05) 0%, rgba(255,255,255,.04) 100%);
+            border-color: rgba(255,188,3,.4);
+            box-shadow:
+                inset 0 1px 0 rgba(255,188,3,.18),
+                0 14px 36px rgba(241,111,36,.18),
+                0 18px 56px rgba(0,0,0,.45);
+        }
+        .surface-strong {
+            background: var(--surface-10);
+            border: 1px solid var(--border-soft);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.06),
+                0 8px 24px rgba(0,0,0,.35);
         }
 
-        .glow-scribe {
-            box-shadow: 0 0 60px rgba(192, 38, 211, 0.3);
+        .card-blue, .card-flame {
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.22),
+                inset 0 -1px 0 rgba(0,0,0,.15),
+                0 14px 36px rgba(0,0,0,.45);
+            transition:
+                transform .45s cubic-bezier(.2,.8,.2,1),
+                box-shadow .45s cubic-bezier(.2,.8,.2,1);
+        }
+        .card-blue  { background: linear-gradient(160deg, #3479ee 0%, #2864db 60%, #1f4fb0 100%); }
+        .card-flame { background: linear-gradient(160deg, #ff8a2c 0%, #f96c04 60%, #d35a10 100%); }
+        .card-flame:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.3),
+                inset 0 -1px 0 rgba(0,0,0,.18),
+                0 22px 56px rgba(249,108,4,.35),
+                0 28px 72px rgba(0,0,0,.55);
+        }
+        .card-blue:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.3),
+                inset 0 -1px 0 rgba(0,0,0,.18),
+                0 22px 56px rgba(40,100,219,.35),
+                0 28px 72px rgba(0,0,0,.55);
         }
 
         .glass {
-            background: rgba(24, 24, 27, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,.06);
         }
 
-        .code-window {
-            background: #0f0f10;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
+        /* ===================== BUTTONS ===================== */
+        .btn {
+            position: relative;
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; min-height: 44px; padding: 0 22px;
+            border-radius: 14px;
+            font-weight: 500;
+            font-size: 15px;
+            transition:
+                transform .25s cubic-bezier(.2,.8,.2,1),
+                box-shadow .3s cubic-bezier(.2,.8,.2,1),
+                background .25s ease,
+                border-color .25s ease,
+                color .2s ease;
+            white-space: nowrap;
+            user-select: none;
+            will-change: transform;
+        }
+        .btn:active { transform: translateY(1px) scale(.98); transition-duration: .08s; }
+
+        .btn-flame {
+            background: linear-gradient(135deg, #f96c04 0%, #f16f24 100%);
+            color: #000;
+            font-weight: 600;
+            border: 1px solid rgba(255,188,3,.5);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.35),
+                inset 0 -1px 0 rgba(0,0,0,.12),
+                0 10px 26px rgba(249,108,4,.32),
+                0 2px 6px rgba(0,0,0,.25);
+        }
+        .btn-flame:hover {
+            background: linear-gradient(135deg, #ffbc03 0%, #f96c04 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.45),
+                inset 0 -1px 0 rgba(0,0,0,.1),
+                0 14px 38px rgba(255,188,3,.5),
+                0 4px 10px rgba(249,108,4,.35);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            border: 1px solid hsla(0,0%,100%,.4);
+            background: hsla(0,0%,100%,.10);
+            color: #fff;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.08),
+                0 4px 14px rgba(0,0,0,.25);
+        }
+        .btn-ghost:hover {
+            border-color: var(--gold-hover);
+            color: var(--gold-hover);
+            background: rgba(255,188,3,.06);
+            box-shadow:
+                inset 0 1px 0 rgba(255,188,3,.12),
+                0 8px 24px rgba(255,188,3,.18);
+            transform: translateY(-2px);
+        }
+
+        .btn-dark {
+            background: #000;
+            border: 1px solid rgba(255,255,255,.2);
+            color: #fff;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.08),
+                0 4px 14px rgba(0,0,0,.4);
+        }
+        .btn-dark:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            box-shadow:
+                inset 0 1px 0 rgba(255,188,3,.12),
+                0 8px 22px rgba(255,188,3,.18);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile: stack and full-width */
+        @media (max-width: 480px) {
+            .btn { width: 100%; padding: 0 16px; }
+        }
+
+        /* ===================== HERO BACKGROUND ===================== */
+        .top-light {
+            position: absolute;
+            top: -120px; left: 50%; transform: translateX(-50%);
+            width: min(1100px, 110%); height: 420px;
+            background: radial-gradient(ellipse at center,
+                rgba(241,111,36,.30) 0%,
+                rgba(255,188,3,.12) 35%,
+                rgba(0,0,0,0) 70%);
+            filter: blur(20px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .cube-field {
+            position: absolute; inset: 0;
+            opacity: .35;
+            pointer-events: none;
             overflow: hidden;
+            mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
+        }
+        .cube-field::before {
+            content:'';
+            position:absolute; inset:-50%;
+            background-image:
+              linear-gradient(120deg, rgba(255,188,3,.06) 0%, rgba(255,188,3,0) 40%),
+              repeating-linear-gradient(30deg,  rgba(255,255,255,.05) 0 1px, transparent 1px 80px),
+              repeating-linear-gradient(-30deg, rgba(255,255,255,.05) 0 1px, transparent 1px 80px),
+              repeating-linear-gradient(90deg,  rgba(255,255,255,.05) 0 1px, transparent 1px 80px);
+            background-size: auto, 80px 80px, 80px 80px, 80px 80px;
+            animation: cubeDrift 60s linear infinite;
+        }
+        @keyframes cubeDrift {
+            from { transform: translate3d(0,0,0); }
+            to   { transform: translate3d(-160px,-160px,0); }
+        }
+        .grid-soft {
+            background-image:
+              linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+            background-size: 64px 64px;
         }
 
+        @keyframes pulseDot {
+            0%,100% { opacity:1; transform: scale(1); }
+            50%     { opacity:.4; transform: scale(.85); }
+        }
+        .pulse-dot { animation: pulseDot 2.4s ease-in-out infinite; }
+
+        /* ===================== LOGO MARKS ===================== */
+        .logo-scribe {
+            height: 28px; width: auto;
+            display: block;
+            filter: drop-shadow(0 0 12px rgba(241,111,36,.25));
+        }
+        @media (min-width: 768px) {
+            .logo-scribe { height: 32px; }
+        }
+        .logo-fractal {
+            height: 22px; width: auto;
+            display: block;
+        }
+        @media (min-width: 768px) {
+            .logo-fractal { height: 28px; }
+        }
+        .logo-fractal-lg { height: 32px; }
+        @media (min-width: 768px) {
+            .logo-fractal-lg { height: 44px; }
+        }
+
+        /* ===================== CODE WINDOW ===================== */
+        .code-window {
+            background: linear-gradient(180deg, #0a0a0d 0%, #050507 100%);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.06),
+                0 12px 32px rgba(0,0,0,.5),
+                0 4px 12px rgba(0,0,0,.3);
+        }
         .code-header {
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255,255,255,.03);
+            border-bottom: 1px solid rgba(255,255,255,.06);
             padding: 12px 16px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        .code-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        .code-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+        .code-body {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 18px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        @media (min-width: 768px) {
+            .code-body { font-size: 14px; padding: 24px; }
+        }
+        .code-body pre {
+            margin: 0;
+            white-space: pre;
+            min-width: max-content;
         }
 
-        .grid-pattern {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 60px 60px;
-        }
-
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .feature-card:hover {
-            transform: translateY(-4px);
-        }
-
+        /* ===================== TOOL BADGES ===================== */
         .tool-badge {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 10px;
+            padding: 6px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            transition: all .2s ease;
+            word-break: break-word;
+        }
+        @media (min-width: 768px) {
+            .tool-badge { font-size: 12px; padding: 6px 11px; }
         }
         .tool-badge:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255,188,3,.08);
+            border-color: rgba(255,188,3,.35);
+            color: var(--gold);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 0 30px rgba(20, 184, 166, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.25);
+        .pill {
+            display: inline-flex; align-items:center; gap:8px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            font-size: 13px;
         }
 
-        .stat-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+        .step-num {
+            width: 36px; height: 36px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ffbc03, #f96c04);
+            color: #000;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.4),
+                inset 0 -1px 0 rgba(0,0,0,.15),
+                0 6px 18px rgba(241,111,36,.45),
+                0 2px 6px rgba(0,0,0,.25);
+            flex-shrink: 0;
         }
 
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
+        .divider-glow {
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(241,111,36,.3) 30%,
+                rgba(255,188,3,.45) 50%,
+                rgba(241,111,36,.3) 70%,
+                transparent 100%);
         }
 
-        .typing-text {
-            overflow: hidden;
-            white-space: nowrap;
-            animation: typing 3s steps(40, end);
+        /* color helpers */
+        .white-85 { color: rgba(255,255,255,.85); }
+        .white-65 { color: rgba(255,255,255,.65); }
+        .white-45 { color: rgba(255,255,255,.45); }
+
+        /* ===================== MOBILE NAV DRAWER ===================== */
+        .menu-toggle {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255,255,255,.05);
+            cursor: pointer;
+        }
+        .menu-toggle svg { transition: transform .25s ease; }
+        body.menu-open .menu-toggle svg { transform: rotate(90deg); }
+
+        .mobile-drawer {
+            position: fixed;
+            top: 64px; left: 0; right: 0;
+            background: rgba(0,0,0,.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            transform: translateY(-110%);
+            transition: transform .3s cubic-bezier(.4,0,.2,1);
+            z-index: 40;
+            padding: 20px 16px 24px;
+        }
+        body.menu-open .mobile-drawer { transform: translateY(0); }
+        .mobile-drawer a {
+            display: block;
+            padding: 14px 12px;
+            font-size: 16px;
+            color: rgba(255,255,255,.85);
+            border-radius: 10px;
+            transition: background .15s ease, color .15s ease;
+        }
+        .mobile-drawer a:hover, .mobile-drawer a:active {
+            background: rgba(255,188,3,.08);
+            color: var(--gold);
+        }
+
+        /* lock scroll when menu open */
+        body.menu-open { overflow: hidden; }
+
+        /* ===================== UTILS ===================== */
+        .container-1200 { max-width: 1200px; margin-left: auto; margin-right: auto; }
+        .section-pad { padding-top: 64px; padding-bottom: 64px; }
+        @media (min-width: 768px) { .section-pad { padding-top: 96px; padding-bottom: 96px; } }
+
+        .hover-lift { transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+        .hover-lift:hover { transform: translateY(-6px); }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+            html { scroll-behavior: auto; }
         }
     </style>
 </head>
 <body class="font-sans antialiased">
-    <!-- Navigation -->
+
+    <!-- ========================== NAV ========================== -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="container-1200 px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">F</span>
-                    </div>
-                    <span class="font-semibold text-lg">Frank</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-fractal-500/20 text-fractal-400 font-medium">v0.4</span>
-                </div>
-                <div class="hidden md:flex items-center gap-8">
-                    <a href="#features" class="text-sm text-zinc-400 hover:text-white transition-colors">Features</a>
-                    <a href="#tools" class="text-sm text-zinc-400 hover:text-white transition-colors">Tools</a>
-                    <a href="#scribe" class="text-sm text-zinc-400 hover:text-white transition-colors">Scribe Protocol</a>
-                    <a href="#quickstart" class="text-sm text-zinc-400 hover:text-white transition-colors">Quick Start</a>
-                </div>
-                <a href="https://github.com/bitbragi/frank-mcp"
-                   class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
-                    </svg>
-                    GitHub
+                <a href="/" class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <img src="/img/fractal-logo-white.png" alt="Fractal Bitcoin" class="h-6 sm:h-8 w-auto flex-shrink-0">
+                    <span class="font-extrabold text-2xl sm:text-[30px] leading-none">Frank</span>
+                    <span class="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-flame-400/15 text-flame-300 border border-flame-400/25 font-medium ml-1">v0.4</span>
                 </a>
+
+                <div class="hidden md:flex items-center gap-9 text-sm">
+                    <a href="#features"   class="white-65 hover:text-white transition-colors">Features</a>
+                    <a href="#tools"      class="white-65 hover:text-white transition-colors">Tools</a>
+                    <a href="#scribe"     class="white-65 hover:text-white transition-colors">Scribe Protocol</a>
+                    <a href="#quickstart" class="white-65 hover:text-white transition-colors">Quick Start</a>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <a href="https://github.com/bitbragi/frank-mcp" class="btn btn-ghost text-sm h-9 px-3 sm:px-4 !min-h-0">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="hidden xs:inline sm:inline">GitHub</span>
+                    </a>
+                    <button class="md:hidden menu-toggle" aria-label="Toggle menu" onclick="document.body.classList.toggle('menu-open')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-        <!-- Background Effects -->
-        <div class="absolute inset-0 grid-pattern"></div>
-        <div class="absolute top-1/4 -left-32 w-96 h-96 bg-fractal-500/20 rounded-full blur-[128px]"></div>
-        <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-scribe-500/20 rounded-full blur-[128px]"></div>
+    <!-- mobile drawer -->
+    <div class="mobile-drawer md:hidden">
+        <div class="container-1200 px-4">
+            <a href="#features"   onclick="document.body.classList.remove('menu-open')">Features</a>
+            <a href="#tools"      onclick="document.body.classList.remove('menu-open')">Tools</a>
+            <a href="#scribe"     onclick="document.body.classList.remove('menu-open')">Scribe Protocol</a>
+            <a href="#quickstart" onclick="document.body.classList.remove('menu-open')">Quick Start</a>
+            <a href="https://github.com/bitbragi/frank-mcp">GitHub</a>
+        </div>
+    </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass mb-8">
-                        <div class="w-2 h-2 rounded-full bg-fractal-400 animate-pulse"></div>
-                        <span class="text-sm text-zinc-400">MCP Server for Fractal Bitcoin</span>
-                    </div>
+    <!-- ========================== HERO ========================== -->
+    <section class="relative pt-24 sm:pt-32 pb-16 sm:pb-24 overflow-hidden">
+        <div class="cube-field"></div>
+        <div class="top-light"></div>
 
-                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-                        Hi, I'm <span class="gradient-text">Frank</span>
-                    </h1>
+        <div class="relative container-1200 px-4 sm:px-6 lg:px-8">
 
-                    <p class="text-2xl sm:text-3xl text-zinc-300 font-medium mb-4">
-                        Your OP_CAT AI Instructor
-                    </p>
-
-                    <p class="text-lg text-zinc-500 max-w-xl mb-10">
-                        I know everything about building on Fractal Bitcoin with OP_CAT.
-                        Connect me to your AI and start building covenants, smart contracts,
-                        and the future of programmable Bitcoin.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="#quickstart" class="btn-primary px-8 py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2">
-                            Get Started
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                            </svg>
-                        </a>
-                        <a href="https://github.com/bitbragi/frank-mcp" class="btn-secondary px-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
-                            </svg>
-                            View Source
-                        </a>
-                    </div>
+            <div class="text-center mb-10 sm:mb-14">
+                <div class="mb-6 sm:mb-8">
+                    <span class="inline-flex items-center gap-2 pill">
+                        <span class="w-2 h-2 rounded-full bg-flame-400 pulse-dot"></span>
+                        <span class="white-65 text-xs sm:text-sm">MCP Server for Fractal Bitcoin</span>
+                    </span>
                 </div>
 
-                <!-- Code Preview -->
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-r from-fractal-500/20 to-scribe-500/20 rounded-2xl blur-2xl"></div>
-                    <div class="relative code-window">
-                        <div class="code-header">
-                            <div class="code-dot bg-red-500"></div>
-                            <div class="code-dot bg-yellow-500"></div>
-                            <div class="code-dot bg-green-500"></div>
-                            <span class="ml-3 text-xs text-zinc-500 font-mono">claude-code</span>
-                        </div>
-                        <div class="p-6 font-mono text-sm">
-                            <div class="text-zinc-500 mb-2"># Connect Frank to your AI</div>
-                            <div class="text-fractal-400 mb-4">
-                                <span class="text-zinc-500">$</span> claude mcp add frank -- python frank_mcp.py
-                            </div>
+                <div class="relative inline-block">
+                    <h1 class="display-1 gold-orange-grad">Hi, I'm Frank</h1>
+                    <span class="display-1 hero-outline" aria-hidden="true">Hi, I'm Frank</span>
+                </div>
 
-                            <div class="text-zinc-500 mb-2"># Ask Frank anything</div>
-                            <div class="text-zinc-300 mb-2">
-                                <span class="text-scribe-400">→</span> Create a time-locked vault covenant
-                            </div>
+                <p class="display-3 tagline-grad mt-3 sm:mt-4">
+                    Your OP_CAT AI Instructor
+                </p>
 
-                            <div class="mt-4 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
-                                <div class="text-fractal-400 mb-2">Frank:</div>
-                                <div class="text-zinc-400 text-xs leading-relaxed">
-                                    I'll scaffold a vault covenant with OP_CAT state<br>
-                                    management. The vault will support:<br><br>
-                                    <span class="text-zinc-300">• Time-locked withdrawals (144 blocks)</span><br>
-                                    <span class="text-zinc-300">• Emergency recovery key</span><br>
-                                    <span class="text-zinc-300">• Withdrawal cancellation</span><br><br>
-                                    <span class="text-scribe-400">Creating project at ~/scribe-covenants/vault...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <p class="mt-5 sm:mt-6 text-sm sm:text-base lg:text-lg white-65 max-w-2xl mx-auto px-2 leading-relaxed">
+                    I know everything about building on Fractal Bitcoin with OP_CAT and Scribe Protocol.
+                    Connect me to your AI and start building covenants, smart contracts, plus register inscribed
+                    content to pioneer programmable digital ownership and licensing w/ the Scribe Protocol.
+                </p>
+
+                <div class="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 justify-center px-2 sm:px-0">
+                    <a href="#quickstart" class="btn btn-flame">
+                        Get Started
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </a>
+                    <a href="https://github.com/bitbragi/frank-mcp" class="btn btn-ghost">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
+                        View Source
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <svg class="w-6 h-6 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-            </svg>
-        </div>
-    </section>
+            <!-- Hero feature tiles -->
+            <div class="mt-12 sm:mt-16 grid lg:grid-cols-2 gap-5 sm:gap-6">
 
-    <!-- Powered By -->
-    <section class="py-16 border-y border-zinc-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <p class="text-sm text-zinc-500 uppercase tracking-wider">Powered By</p>
-            </div>
-            <div class="flex flex-wrap justify-center items-center gap-12 opacity-60">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-bitcoin-400/20 flex items-center justify-center">
-                        <span class="text-bitcoin-400 font-bold">₿</span>
+                <div class="card-flame px-6 sm:px-8 py-7 sm:py-10 flex flex-col justify-between min-h-[208px] sm:min-h-[240px] relative overflow-hidden">
+                    <div class="absolute -right-6 -top-6 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="/img/fractal-logo-allwhite.svg" alt="Fractal Bitcoin" class="h-6 sm:h-7 w-auto">
+                            <div class="text-xl sm:text-2xl font-semibold text-white">Frank, the Instructor</div>
+                        </div>
+                        <p class="text-white/85 text-sm sm:text-base max-w-md leading-relaxed">
+                            An MCP server packed with OP_CAT covenant patterns, sCrypt scaffolding, and full Fractal RPC access.
+                            Frank teaches your AI to build like a Bitcoin covenant native.
+                        </p>
                     </div>
-                    <span class="text-lg font-semibold">Fractal Bitcoin</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                        <span class="text-purple-400 font-bold">S</span>
+                    <div class="relative mt-5 sm:mt-6">
+                        <a href="https://github.com/bitbragi/frank-mcp" class="btn btn-dark text-sm">Get Frank</a>
                     </div>
-                    <span class="text-lg font-semibold">sCrypt</span>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-scribe-500/20 flex items-center justify-center">
-                        <span class="text-scribe-400 font-bold">✦</span>
+
+                <div class="card-blue px-6 sm:px-8 py-7 sm:py-10 flex flex-col justify-between min-h-[208px] sm:min-h-[240px] relative overflow-hidden">
+                    <div class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-white/10 blur-3xl"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 sm:h-8 w-auto">
+                            <div class="text-xl sm:text-2xl font-semibold text-white">Scribe Protocol — Covenant Edition</div>
+                        </div>
+                        <p class="text-white/85 text-sm sm:text-base max-w-md leading-relaxed">
+                            Programmable digital rights on Bitcoin. Master covenants, license issuance, and revenue splits — all enforced on-chain.
+                        </p>
                     </div>
-                    <span class="text-lg font-semibold">MyScribe</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-fractal-500/20 flex items-center justify-center">
-                        <span class="text-fractal-400 font-bold">🐱</span>
+                    <div class="relative mt-5 sm:mt-6">
+                        <a href="#scribe" class="btn btn-dark text-sm">Read the Spec</a>
                     </div>
-                    <span class="text-lg font-semibold">CAT Protocol</span>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Features -->
-    <section id="features" class="py-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl sm:text-5xl font-bold mb-4">
-                    Why <span class="gradient-text">Frank</span>?
+    <!-- ========================== POWERED BY ========================== -->
+    <section class="py-12 sm:py-16 relative">
+        <div class="divider-glow"></div>
+        <div class="container-1200 px-4 sm:px-6 lg:px-8 mt-10 sm:mt-12">
+            <p class="text-[11px] sm:text-xs uppercase tracking-[.25em] white-45 text-center mb-8 sm:mb-10">Built on the Bitcoin stack</p>
+            <div class="flex flex-wrap justify-center items-center gap-x-8 sm:gap-x-14 gap-y-6 sm:gap-y-8 opacity-90">
+
+                <a href="https://fractalbitcoin.io" target="_blank" rel="noopener" class="flex items-center hover:opacity-100 opacity-80 transition-opacity">
+                    <img src="/img/fractal-logo.svg" alt="Fractal Bitcoin" class="logo-fractal">
+                </a>
+
+                <div class="hidden sm:block w-px h-8 bg-white/10"></div>
+
+                <a href="https://scrypt.io" target="_blank" rel="noopener" class="flex items-center gap-2.5 hover:opacity-100 opacity-80 transition-opacity">
+                    <img src="/img/scrypt-logo.jpg" alt="sCrypt" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg object-cover border border-white/10">
+                    <span class="font-medium text-sm sm:text-base">sCrypt</span>
+                </a>
+
+                <div class="hidden sm:block w-px h-8 bg-white/10"></div>
+
+                <a href="https://myscribe.org" target="_blank" rel="noopener" class="flex items-center gap-2.5 hover:opacity-100 opacity-80 transition-opacity">
+                    <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 sm:h-8 w-auto">
+                    <span class="font-medium text-sm sm:text-base">MyScribe</span>
+                </a>
+
+                <div class="hidden sm:block w-px h-8 bg-white/10"></div>
+
+                <div class="flex items-center gap-2.5 opacity-80">
+                    <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-flame-400/15 border border-flame-400/30 flex items-center justify-center p-1.5">
+                        <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
+                    </span>
+                    <span class="font-medium text-sm sm:text-base">OP_CAT</span>
+                </div>
+
+            </div>
+        </div>
+        <div class="divider-glow mt-12 sm:mt-16"></div>
+    </section>
+
+    <!-- ========================== FEATURES ========================== -->
+    <section id="features" class="section-pad relative">
+        <div class="absolute inset-0 grid-soft opacity-50"></div>
+        <div class="relative container-1200 px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="display-2 mb-3 sm:mb-4">
+                    Why <span class="gold-orange-grad inline-block">Frank</span>?
                 </h2>
-                <p class="text-lg text-zinc-500 max-w-2xl mx-auto">
-                    Frank bridges the gap between AI assistants and Fractal Bitcoin development,
+                <p class="text-base sm:text-lg white-65 max-w-2xl mx-auto px-2">
+                    Frank bridges the gap between AI assistants and Fractal Bitcoin development —
                     giving your AI superpowers for covenant construction.
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Feature 1 -->
-                <div class="feature-card gradient-border p-6">
-                    <div class="w-12 h-12 rounded-xl bg-fractal-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-fractal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                <!-- 1 -->
+                <div class="surface p-5 sm:p-6 hover-lift">
+                    <div class="w-11 h-11 rounded-xl bg-flame-400/15 border border-flame-400/25 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-flame-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">OP_CAT Native</h3>
-                    <p class="text-zinc-500">
-                        Deep expertise in OP_CAT covenant patterns. Generate stateful contracts that were impossible before Fractal.
-                    </p>
+                    <h3 class="text-lg font-semibold mb-2">OP_CAT Native</h3>
+                    <p class="white-65 text-sm leading-relaxed">Deep expertise in OP_CAT covenant patterns. Generate stateful contracts that were impossible before Fractal.</p>
                 </div>
-
-                <!-- Feature 2 -->
-                <div class="feature-card gradient-border p-6">
-                    <div class="w-12 h-12 rounded-xl bg-scribe-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-scribe-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
+                <!-- 2 -->
+                <div class="surface p-5 sm:p-6 hover-lift">
+                    <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/25 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Scribe Protocol</h3>
-                    <p class="text-zinc-500">
-                        Powers MyScribe's covenant-native digital rights. Masters, licenses, and revenue splits on Bitcoin.
-                    </p>
+                    <h3 class="text-lg font-semibold mb-2">Scribe Protocol</h3>
+                    <p class="white-65 text-sm leading-relaxed">Powers MyScribe's covenant-native digital rights. Masters, licenses, and revenue splits on Bitcoin.</p>
                 </div>
-
-                <!-- Feature 3 -->
-                <div class="feature-card gradient-border p-6">
-                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                        </svg>
+                <!-- 3 -->
+                <div class="surface p-5 sm:p-6 hover-lift">
+                    <div class="w-11 h-11 rounded-xl bg-sky-400/15 border border-sky-400/25 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">sCrypt Integration</h3>
-                    <p class="text-zinc-500">
-                        Scaffold, compile, and test sCrypt-TS contracts. Templates for common patterns included.
-                    </p>
+                    <h3 class="text-lg font-semibold mb-2">sCrypt Integration</h3>
+                    <p class="white-65 text-sm leading-relaxed">Scaffold, compile, and test sCrypt-TS contracts. Templates for common patterns included.</p>
                 </div>
-
-                <!-- Feature 4 -->
-                <div class="feature-card gradient-border p-6">
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/>
-                        </svg>
+                <!-- 4 -->
+                <div class="surface p-5 sm:p-6 hover-lift">
+                    <div class="w-11 h-11 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/></svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Full RPC Access</h3>
-                    <p class="text-zinc-500">
-                        Query blocks, transactions, mempool, UTXOs. Broadcast transactions. Full Fractal node access.
-                    </p>
+                    <h3 class="text-lg font-semibold mb-2">Full RPC Access</h3>
+                    <p class="white-65 text-sm leading-relaxed">Query blocks, transactions, mempool, UTXOs. Broadcast transactions. Full Fractal node access.</p>
                 </div>
-
-                <!-- Feature 5 -->
-                <div class="feature-card gradient-border p-6">
-                    <div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
+                <!-- 5 -->
+                <div class="surface p-5 sm:p-6 hover-lift">
+                    <div class="w-11 h-11 rounded-xl bg-flame-300/15 border border-flame-300/25 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-flame-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">CAT-721 NFTs</h3>
-                    <p class="text-zinc-500">
-                        Generate NFT collections with traits, royalties, and reveal mechanics for Fractal Bitcoin.
-                    </p>
+                    <h3 class="text-lg font-semibold mb-2">CAT-721 NFTs</h3>
+                    <p class="white-65 text-sm leading-relaxed">Generate NFT collections with traits, royalties, and reveal mechanics for Fractal Bitcoin.</p>
                 </div>
-
-                <!-- Feature 6 -->
-                <div class="feature-card gradient-border p-6">
-                    <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                        </svg>
+                <!-- 6 -->
+                <div class="surface p-5 sm:p-6 hover-lift">
+                    <div class="w-11 h-11 rounded-xl bg-gold-300/15 border border-gold-300/25 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Self-Improving</h3>
-                    <p class="text-zinc-500">
-                        Frank learns from every interaction. Log insights, propose improvements, evolve capabilities.
-                    </p>
+                    <h3 class="text-lg font-semibold mb-2">Self-Improving</h3>
+                    <p class="white-65 text-sm leading-relaxed">Frank learns from every interaction. Log insights, propose improvements, evolve capabilities.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Tools Section -->
-    <section id="tools" class="py-24 bg-zinc-900/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl sm:text-5xl font-bold mb-4">30+ Tools</h2>
-                <p class="text-lg text-zinc-500">Everything you need to build on Fractal</p>
+    <!-- ========================== TOOLS ========================== -->
+    <section id="tools" class="section-pad relative">
+        <div class="absolute inset-x-0 top-0 h-px divider-glow"></div>
+        <div class="container-1200 px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="display-2 mb-3">30+ Tools</h2>
+                <p class="text-base sm:text-lg white-65">Everything you need to build on Fractal</p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Fractal RPC -->
-                <div class="gradient-border p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-fractal-500/20 flex items-center justify-center">
-                            <span class="text-fractal-400">₿</span>
+            <div class="grid sm:grid-cols-2 gap-5 sm:gap-6">
+
+                <div class="surface p-5 sm:p-7">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-flame-400/15 border border-flame-400/25 flex items-center justify-center flex-shrink-0">
+                            <img src="/img/fractal-mark.svg" alt="Fractal Bitcoin" class="w-6 h-6">
                         </div>
                         <div>
                             <h3 class="font-semibold">Fractal Bitcoin RPC</h3>
-                            <p class="text-sm text-zinc-500">18 tools</p>
+                            <p class="text-sm white-45">18 tools</p>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">fractal_get_block_height</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">fractal_send_raw_transaction</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">fractal_list_unspent</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">fractal_estimate_smart_fee</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">fractal_decode_script</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono text-zinc-500">+13 more</span>
+                        <span class="tool-badge">fractal_get_block_height</span>
+                        <span class="tool-badge">fractal_send_raw_transaction</span>
+                        <span class="tool-badge">fractal_list_unspent</span>
+                        <span class="tool-badge">fractal_estimate_smart_fee</span>
+                        <span class="tool-badge">fractal_decode_script</span>
+                        <span class="tool-badge white-45">+13 more</span>
                     </div>
                 </div>
 
-                <!-- sCrypt -->
-                <div class="gradient-border p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                            <span class="text-purple-400">S</span>
+                <div class="surface p-5 sm:p-7">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-11 h-11 rounded-xl overflow-hidden border border-white/10 flex-shrink-0">
+                            <img src="/img/scrypt-logo.jpg" alt="sCrypt" class="w-full h-full object-cover">
                         </div>
                         <div>
                             <h3 class="font-semibold">sCrypt Development</h3>
-                            <p class="text-sm text-zinc-500">4 tools + 5 templates</p>
+                            <p class="text-sm white-45">4 tools + 5 templates</p>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">scrypt_create_project</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">scrypt_compile</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">scrypt_test</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">scrypt_create_advanced_contract</span>
+                        <span class="tool-badge">scrypt_create_project</span>
+                        <span class="tool-badge">scrypt_compile</span>
+                        <span class="tool-badge">scrypt_test</span>
+                        <span class="tool-badge">scrypt_create_advanced_contract</span>
                     </div>
-                    <div class="mt-3 pt-3 border-t border-zinc-800">
-                        <p class="text-xs text-zinc-500 mb-2">Templates:</p>
+                    <div class="mt-4 pt-4 border-t border-white/[.08]">
+                        <p class="text-[11px] white-45 mb-2 uppercase tracking-wider">Templates</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-xs">hashlock</span>
-                            <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-xs">multisig</span>
-                            <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-xs">oracle</span>
-                            <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-xs">auction</span>
-                            <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-xs">escrow</span>
+                            <span class="px-2.5 py-1 rounded-md bg-sky-400/10 text-sky-400 text-xs font-medium border border-sky-400/20">hashlock</span>
+                            <span class="px-2.5 py-1 rounded-md bg-sky-400/10 text-sky-400 text-xs font-medium border border-sky-400/20">multisig</span>
+                            <span class="px-2.5 py-1 rounded-md bg-sky-400/10 text-sky-400 text-xs font-medium border border-sky-400/20">oracle</span>
+                            <span class="px-2.5 py-1 rounded-md bg-sky-400/10 text-sky-400 text-xs font-medium border border-sky-400/20">auction</span>
+                            <span class="px-2.5 py-1 rounded-md bg-sky-400/10 text-sky-400 text-xs font-medium border border-sky-400/20">escrow</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- ScribeMaster -->
-                <div class="gradient-border p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-scribe-500/20 flex items-center justify-center">
-                            <span class="text-scribe-400">✦</span>
+                <div class="surface p-5 sm:p-7">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/25 flex items-center justify-center overflow-hidden">
+                            <img src="/img/scribe-logo.png" alt="Scribe" class="w-7 h-7 object-contain">
                         </div>
                         <div>
                             <h3 class="font-semibold">ScribeMaster Covenants</h3>
-                            <p class="text-sm text-zinc-500">6 covenant types</p>
+                            <p class="text-sm white-45">6 covenant types</p>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">scribe_scaffold_master</span>
+                        <span class="tool-badge">scribe_scaffold_master</span>
                     </div>
-                    <div class="mt-3 pt-3 border-t border-zinc-800">
-                        <p class="text-xs text-zinc-500 mb-2">Covenant Types:</p>
+                    <div class="mt-4 pt-4 border-t border-white/[.08]">
+                        <p class="text-[11px] white-45 mb-2 uppercase tracking-wider">Covenant Types</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-2 py-1 rounded bg-scribe-500/10 text-scribe-400 text-xs">state-machine</span>
-                            <span class="px-2 py-1 rounded bg-scribe-500/10 text-scribe-400 text-xs">vault</span>
-                            <span class="px-2 py-1 rounded bg-scribe-500/10 text-scribe-400 text-xs">crowdfund</span>
-                            <span class="px-2 py-1 rounded bg-scribe-500/10 text-scribe-400 text-xs">token</span>
-                            <span class="px-2 py-1 rounded bg-scribe-500/10 text-scribe-400 text-xs">inscription</span>
-                            <span class="px-2 py-1 rounded bg-scribe-500/10 text-scribe-400 text-xs">atomic-swap</span>
+                            <span class="px-2.5 py-1 rounded-md bg-gold-400/10 text-gold-400 text-xs font-medium border border-gold-400/20">state-machine</span>
+                            <span class="px-2.5 py-1 rounded-md bg-gold-400/10 text-gold-400 text-xs font-medium border border-gold-400/20">vault</span>
+                            <span class="px-2.5 py-1 rounded-md bg-gold-400/10 text-gold-400 text-xs font-medium border border-gold-400/20">crowdfund</span>
+                            <span class="px-2.5 py-1 rounded-md bg-gold-400/10 text-gold-400 text-xs font-medium border border-gold-400/20">token</span>
+                            <span class="px-2.5 py-1 rounded-md bg-gold-400/10 text-gold-400 text-xs font-medium border border-gold-400/20">inscription</span>
+                            <span class="px-2.5 py-1 rounded-md bg-gold-400/10 text-gold-400 text-xs font-medium border border-gold-400/20">atomic-swap</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- CAT-721 & Learning -->
-                <div class="gradient-border p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center">
-                            <span class="text-pink-400">🐱</span>
+                <div class="surface p-5 sm:p-7">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-flame-400/15 border border-flame-400/25 flex items-center justify-center p-2 flex-shrink-0">
+                            <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
                         </div>
                         <div>
                             <h3 class="font-semibold">CAT-721 & Self-Learning</h3>
-                            <p class="text-sm text-zinc-500">6 tools</p>
+                            <p class="text-sm white-45">6 tools</p>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">cat_scaffold_721</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">cat_scaffold_721_advanced</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">log_learning</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">get_learnings</span>
-                        <span class="tool-badge px-3 py-1.5 rounded-lg text-xs font-mono">propose_improvement</span>
+                        <span class="tool-badge">cat_scaffold_721</span>
+                        <span class="tool-badge">cat_scaffold_721_advanced</span>
+                        <span class="tool-badge">log_learning</span>
+                        <span class="tool-badge">get_learnings</span>
+                        <span class="tool-badge">propose_improvement</span>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Scribe Protocol Section -->
-    <section id="scribe" class="py-24 relative overflow-hidden">
-        <div class="absolute inset-0">
-            <div class="absolute top-0 left-1/4 w-96 h-96 bg-scribe-500/10 rounded-full blur-[128px]"></div>
-            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-fractal-500/10 rounded-full blur-[128px]"></div>
-        </div>
+    <!-- ========================== SCRIBE PROTOCOL ========================== -->
+    <section id="scribe" class="section-pad relative overflow-hidden">
+        <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gold-400/[.07] rounded-full blur-[140px] -z-0"></div>
+        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-flame-400/[.07] rounded-full blur-[140px] -z-0"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="relative container-1200 px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass mb-6">
-                        <span class="text-scribe-400">✦</span>
-                        <span class="text-sm">Scribe Protocol — Covenant Edition</span>
+                    <div class="inline-flex items-center gap-3 mb-6">
+                        <img src="/img/scribe-logo.png" alt="Scribe" class="h-9 sm:h-11 w-auto">
+                        <div class="text-xs sm:text-sm white-65 uppercase tracking-[.2em]">Covenant Edition</div>
                     </div>
 
-                    <h2 class="text-4xl sm:text-5xl font-bold mb-6">
-                        Programmable Digital Rights on <span class="gradient-text">Bitcoin</span>
+                    <h2 class="display-2 mb-5 sm:mb-6">
+                        Programmable Digital Rights on
+                        <span class="gold-orange-grad inline-block">Bitcoin</span>
                     </h2>
 
-                    <p class="text-lg text-zinc-400 mb-8">
+                    <p class="text-base sm:text-lg white-65 mb-7 sm:mb-8 leading-relaxed">
                         Frank powers the Scribe Protocol — a covenant-native system for digital ownership,
                         licensing, and revenue distribution. No trusted third parties. Pure Bitcoin.
                     </p>
 
-                    <div class="space-y-4 mb-8">
+                    <div class="space-y-5 mb-8">
                         <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-lg bg-fractal-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4 text-fractal-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
+                            <div class="w-8 h-8 rounded-lg bg-flame-400/15 border border-flame-400/25 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-flame-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                             </div>
                             <div>
                                 <h4 class="font-semibold mb-1">Master Covenants</h4>
-                                <p class="text-sm text-zinc-500">Immutable ownership records with SID (Scribe ID) commitment</p>
+                                <p class="text-sm white-65">Immutable ownership records with SID (Scribe ID) commitment</p>
                             </div>
                         </div>
-
                         <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-lg bg-scribe-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4 text-scribe-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
+                            <div class="w-8 h-8 rounded-lg bg-gold-400/15 border border-gold-400/25 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-gold-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                             </div>
                             <div>
                                 <h4 class="font-semibold mb-1">License Issuance</h4>
-                                <p class="text-sm text-zinc-500">Streaming, download, sync, and master licenses as child covenants</p>
+                                <p class="text-sm white-65">Streaming, download, sync, and master licenses as child covenants</p>
                             </div>
                         </div>
-
                         <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
+                            <div class="w-8 h-8 rounded-lg bg-sky-400/15 border border-sky-400/25 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-sky-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                             </div>
                             <div>
                                 <h4 class="font-semibold mb-1">Revenue Splits</h4>
-                                <p class="text-sm text-zinc-500">Automatic royalty distribution via covenant enforcement</p>
+                                <p class="text-sm white-65">Automatic royalty distribution via covenant enforcement</p>
                             </div>
                         </div>
                     </div>
 
                     <a href="https://github.com/bitbragi/frank-mcp/blob/main/SCRIBE_COVENANT_EDITION_SPEC.md"
-                       class="inline-flex items-center gap-2 text-scribe-400 font-medium hover:text-scribe-300 transition-colors">
+                       class="inline-flex items-center gap-2 text-flame-500 font-semibold hover:text-gold-400 transition-colors underline underline-offset-4 decoration-flame-500/40">
                         Read the Full Specification
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
                 </div>
 
-                <!-- Code Example -->
                 <div class="code-window">
                     <div class="code-header">
                         <div class="code-dot bg-red-500"></div>
                         <div class="code-dot bg-yellow-500"></div>
                         <div class="code-dot bg-green-500"></div>
-                        <span class="ml-3 text-xs text-zinc-500 font-mono">ScribeMaster.ts</span>
+                        <span class="ml-3 text-xs white-45 font-mono">ScribeMaster.ts</span>
                     </div>
-                    <div class="p-6 font-mono text-sm overflow-x-auto">
-<pre class="text-zinc-300"><code><span class="text-purple-400">class</span> <span class="text-fractal-400">ScribeMaster</span> <span class="text-purple-400">extends</span> <span class="text-blue-400">SmartContract</span> {
-    <span class="text-zinc-500">// Immutable Scribe ID</span>
-    <span class="text-scribe-400">@prop()</span>
-    <span class="text-purple-400">readonly</span> sid: <span class="text-blue-400">Sha256</span>
+                    <div class="code-body">
+<pre class="text-zinc-300"><code><span class="text-flame-300">class</span> <span class="text-gold-400">ScribeMaster</span> <span class="text-flame-300">extends</span> <span class="text-sky-400">SmartContract</span> {
+    <span class="white-45">// Immutable Scribe ID</span>
+    <span class="text-gold-400">@prop()</span>
+    <span class="text-flame-300">readonly</span> sid: <span class="text-sky-400">Sha256</span>
 
-    <span class="text-zinc-500">// Transferable ownership</span>
-    <span class="text-scribe-400">@prop</span>(<span class="text-orange-400">true</span>)
-    owner: <span class="text-blue-400">PubKey</span>
+    <span class="white-45">// Transferable ownership</span>
+    <span class="text-gold-400">@prop</span>(<span class="text-flame-400">true</span>)
+    owner: <span class="text-sky-400">PubKey</span>
 
-    <span class="text-scribe-400">@method()</span>
-    <span class="text-purple-400">public</span> <span class="text-yellow-400">transfer</span>(
-        newOwner: <span class="text-blue-400">PubKey</span>,
-        sig: <span class="text-blue-400">Sig</span>
+    <span class="text-gold-400">@method()</span>
+    <span class="text-flame-300">public</span> <span class="text-flame-400">transfer</span>(
+        newOwner: <span class="text-sky-400">PubKey</span>,
+        sig: <span class="text-sky-400">Sig</span>
     ) {
-        <span class="text-fractal-400">assert</span>(<span class="text-purple-400">this</span>.checkSig(sig, <span class="text-purple-400">this</span>.owner))
-        <span class="text-purple-400">this</span>.owner = newOwner
-        <span class="text-zinc-500">// Royalty enforced in outputs</span>
+        <span class="text-gold-400">assert</span>(<span class="text-flame-300">this</span>.checkSig(sig, <span class="text-flame-300">this</span>.owner))
+        <span class="text-flame-300">this</span>.owner = newOwner
+        <span class="white-45">// Royalty enforced in outputs</span>
     }
 
-    <span class="text-scribe-400">@method()</span>
-    <span class="text-purple-400">public</span> <span class="text-yellow-400">issueLicense</span>(
-        licenseType: <span class="text-blue-400">ByteString</span>,
-        sig: <span class="text-blue-400">Sig</span>
+    <span class="text-gold-400">@method()</span>
+    <span class="text-flame-300">public</span> <span class="text-flame-400">issueLicense</span>(
+        licenseType: <span class="text-sky-400">ByteString</span>,
+        sig: <span class="text-sky-400">Sig</span>
     ) {
-        <span class="text-fractal-400">assert</span>(<span class="text-purple-400">this</span>.checkSig(sig, <span class="text-purple-400">this</span>.owner))
-        <span class="text-zinc-500">// Create license covenant</span>
+        <span class="text-gold-400">assert</span>(<span class="text-flame-300">this</span>.checkSig(sig, <span class="text-flame-300">this</span>.owner))
+        <span class="white-45">// Create license covenant</span>
     }
 }</code></pre>
                     </div>
@@ -678,138 +923,153 @@
         </div>
     </section>
 
-    <!-- Quick Start -->
-    <section id="quickstart" class="py-24 bg-zinc-900/50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl sm:text-5xl font-bold mb-4">Quick Start</h2>
-                <p class="text-lg text-zinc-500">Connect Frank to your AI in under a minute</p>
+    <!-- ========================== QUICK START ========================== -->
+    <section id="quickstart" class="section-pad relative">
+        <div class="absolute inset-x-0 top-0 h-px divider-glow"></div>
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-14">
+                <h2 class="display-2 mb-3">Quick Start</h2>
+                <p class="text-base sm:text-lg white-65">Connect Frank to your AI in under a minute</p>
             </div>
 
-            <div class="space-y-6">
-                <!-- Step 1 -->
-                <div class="flex items-start gap-4">
-                    <div class="w-8 h-8 rounded-full bg-fractal-500 flex items-center justify-center flex-shrink-0 text-sm font-bold">1</div>
-                    <div class="flex-1">
+            <div class="space-y-6 sm:space-y-7">
+                <div class="flex items-start gap-4 sm:gap-5">
+                    <div class="step-num">1</div>
+                    <div class="flex-1 min-w-0">
                         <h3 class="font-semibold mb-3">Clone and Setup</h3>
                         <div class="code-window">
-                            <div class="p-4 font-mono text-sm">
-                                <div class="text-zinc-400">git clone https://github.com/bitbragi/frank-mcp.git</div>
-                                <div class="text-zinc-400">cd frank-mcp</div>
-                                <div class="text-zinc-400">python -m venv venv && source venv/bin/activate</div>
-                                <div class="text-zinc-400">pip install fastmcp httpx python-dotenv</div>
+                            <div class="code-body">
+                                <div class="white-85"><span class="text-flame-400">$</span> git clone https://github.com/bitbragi/frank-mcp.git</div>
+                                <div class="white-85"><span class="text-flame-400">$</span> cd frank-mcp</div>
+                                <div class="white-85"><span class="text-flame-400">$</span> python -m venv venv && source venv/bin/activate</div>
+                                <div class="white-85"><span class="text-flame-400">$</span> pip install fastmcp httpx python-dotenv</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 2 -->
-                <div class="flex items-start gap-4">
-                    <div class="w-8 h-8 rounded-full bg-scribe-500 flex items-center justify-center flex-shrink-0 text-sm font-bold">2</div>
-                    <div class="flex-1">
+                <div class="flex items-start gap-4 sm:gap-5">
+                    <div class="step-num">2</div>
+                    <div class="flex-1 min-w-0">
                         <h3 class="font-semibold mb-3">Add to Claude Code</h3>
                         <div class="code-window">
-                            <div class="p-4 font-mono text-sm">
-                                <div class="text-zinc-400">claude mcp add frank -- ~/frank-mcp/venv/bin/python ~/frank-mcp/frank_mcp.py</div>
+                            <div class="code-body">
+                                <div class="white-85"><span class="text-flame-400">$</span> claude mcp add frank -- ~/frank-mcp/venv/bin/python ~/frank-mcp/frank_mcp.py</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 3 -->
-                <div class="flex items-start gap-4">
-                    <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0 text-sm font-bold">3</div>
-                    <div class="flex-1">
+                <div class="flex items-start gap-4 sm:gap-5">
+                    <div class="step-num">3</div>
+                    <div class="flex-1 min-w-0">
                         <h3 class="font-semibold mb-3">Start Building</h3>
                         <div class="code-window">
-                            <div class="p-4 font-mono text-sm">
-                                <div class="text-zinc-500"># Test the connection</div>
-                                <div class="text-fractal-400 mb-2">→ ping()</div>
-                                <div class="text-zinc-300 mb-4">pong @ 2024-01-15T10:30:00Z (frank-mcp v0.4)</div>
-
-                                <div class="text-zinc-500"># Create a vault covenant</div>
-                                <div class="text-scribe-400">→ scribe_scaffold_master("my-vault", "vault")</div>
-                                <div class="text-zinc-300">Scaffolded ScribeMaster vault covenant at ~/scribe-covenants/my-vault</div>
+                            <div class="code-body">
+                                <div class="white-45"># Test the connection</div>
+                                <div class="text-flame-400 mb-2">→ ping()</div>
+                                <div class="white-85 mb-4">pong @ 2024-01-15T10:30:00Z (frank-mcp v0.4)</div>
+                                <div class="white-45"># Create a vault covenant</div>
+                                <div class="text-gold-400">→ scribe_scaffold_master("my-vault", "vault")</div>
+                                <div class="white-85">Scaffolded ScribeMaster vault covenant at ~/scribe-covenants/my-vault</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-12 text-center">
-                <a href="https://github.com/bitbragi/frank-mcp#readme"
-                   class="btn-primary px-8 py-4 rounded-xl font-semibold text-white inline-flex items-center gap-2">
+            <div class="mt-12 sm:mt-14 text-center">
+                <a href="https://github.com/bitbragi/frank-mcp#readme" class="btn btn-flame">
                     View Full Documentation
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="py-24 relative overflow-hidden">
-        <div class="absolute inset-0 gradient-bg opacity-10"></div>
-        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-4xl sm:text-5xl font-bold mb-6">
-                Ready to Build the Future of <span class="gradient-text">Bitcoin</span>?
+    <!-- ========================== CTA ========================== -->
+    <section class="section-pad relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-gold-400/10 via-flame-400/15 to-sky-400/10 blur-3xl"></div>
+        </div>
+        <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+            <div class="flex justify-center mb-8 sm:mb-10">
+                <div class="inline-flex items-center gap-4 sm:gap-5 px-5 sm:px-7 py-3 sm:py-4 rounded-full bg-white/[.04] border border-white/[.08]">
+                    <img src="/img/scribe-logo.png" alt="Scribe" class="h-6 sm:h-7 w-auto">
+                    <span class="text-white/30">×</span>
+                    <img src="/img/fractal-logo.svg" alt="Fractal Bitcoin" class="h-5 sm:h-6 w-auto">
+                </div>
+            </div>
+
+            <h2 class="display-2 mb-5 sm:mb-6">
+                <span class="block">Ready to Build the Future of</span>
+                <span class="gold-orange-grad block">Programmable Permanence on Bitcoin?</span>
             </h2>
-            <p class="text-lg text-zinc-400 mb-10 max-w-2xl mx-auto">
-                Frank is open source and ready to help you build covenant-native applications
-                on Fractal Bitcoin. Join the builders shaping programmable Bitcoin.
+            <p class="text-base sm:text-lg white-65 mb-8 sm:mb-10 max-w-2xl mx-auto">
+                Frank is open source and ready to help you build covenant-native applications on Fractal Bitcoin.
+                Join the builders shaping programmable Bitcoin.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://github.com/bitbragi/frank-mcp"
-                   class="btn-primary px-8 py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
-                    </svg>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="https://github.com/bitbragi/frank-mcp" class="btn btn-flame">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
                     Star on GitHub
                 </a>
-                <a href="https://fractalbitcoin.io"
-                   class="btn-secondary px-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2">
+                <a href="https://fractalbitcoin.io" target="_blank" rel="noopener" class="btn btn-ghost">
                     Learn About Fractal
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-12 border-t border-zinc-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+    <!-- ========================== FOOTER ========================== -->
+    <footer class="py-10 sm:py-12 border-t border-white/[.05]">
+        <div class="container-1200 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-6">
+
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">F</span>
-                    </div>
+                    <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 w-auto">
                     <span class="font-semibold">Frank MCP</span>
-                    <span class="text-zinc-600">|</span>
-                    <span class="text-zinc-500 text-sm">Your OP_CAT AI Instructor</span>
+                    <span class="white-45 hidden sm:inline">|</span>
+                    <span class="white-65 text-sm hidden sm:inline">Your OP_CAT AI Instructor</span>
                 </div>
 
-                <div class="flex items-center gap-6">
-                    <a href="https://github.com/bitbragi/frank-mcp" class="text-zinc-500 hover:text-white transition-colors">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
-                        </svg>
+                <div class="flex flex-wrap items-center gap-x-5 sm:gap-x-7 gap-y-3">
+                    <a href="https://github.com/bitbragi/frank-mcp" class="flex items-center gap-2.5 opacity-80 hover:opacity-100 transition-opacity">
+                        <span class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
+                        </span>
+                        <span class="text-sm font-medium">GitHub</span>
                     </a>
-                    <a href="https://fractalbitcoin.io" class="text-zinc-500 hover:text-white transition-colors text-sm">
-                        Fractal Bitcoin
+                    <a href="https://fractalbitcoin.io" target="_blank" rel="noopener" class="flex items-center opacity-80 hover:opacity-100 transition-opacity">
+                        <img src="/img/fractal-logo.svg" alt="Fractal Bitcoin" class="h-5 w-auto">
                     </a>
-                    <a href="https://scrypt.io" class="text-zinc-500 hover:text-white transition-colors text-sm">
-                        sCrypt
+                    <a href="https://scrypt.io" target="_blank" rel="noopener" class="flex items-center gap-2.5 opacity-80 hover:opacity-100 transition-opacity">
+                        <img src="/img/scrypt-logo.jpg" alt="sCrypt" class="w-7 h-7 rounded-lg object-cover border border-white/10">
+                        <span class="text-sm font-medium">sCrypt</span>
+                    </a>
+                    <a href="https://myscribe.org" target="_blank" rel="noopener" class="flex items-center gap-2.5 opacity-80 hover:opacity-100 transition-opacity">
+                        <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 w-auto">
+                        <span class="text-sm font-medium">MyScribe</span>
                     </a>
                 </div>
 
-                <div class="text-sm text-zinc-600">
-                    Built for the Bitcoin covenant revolution
-                </div>
+                <div class="text-xs sm:text-sm white-45">Built for the Bitcoin covenant revolution</div>
             </div>
         </div>
     </footer>
+
+    <script>
+        // close mobile menu on resize-up
+        const closeMenuOnResize = () => {
+            if (window.innerWidth >= 768) document.body.classList.remove('menu-open');
+        };
+        window.addEventListener('resize', closeMenuOnResize);
+        // close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') document.body.classList.remove('menu-open');
+        });
+    </script>
 </body>
 </html>
