@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frank MCP — Your OP_CAT AI Instructor</title>
+    <meta name="description" content="Frank is an MCP server that connects your AI to Fractal Bitcoin. Build covenants, smart contracts, and NFTs with OP_CAT.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'frank': {
+                            50: '#fef7ee',
+                            100: '#fdedd3',
+                            200: '#fad7a5',
+                            300: '#f6b96d',
+                            400: '#f19132',
+                            500: '#ee7410',
+                            600: '#df5a09',
+                            700: '#b9420a',
+                            800: '#933510',
+                            900: '#772e10',
+                        },
+                        'fractal': {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #f19132 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .code-block {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        .code-block code {
+            color: #d4d4d4;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+        }
+        .tool-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .tool-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-frank-100 via-white to-fractal-100"></div>
+        <div class="relative max-w-6xl mx-auto px-4 py-20 sm:py-32">
+            <div class="text-center">
+                <div class="mb-6">
+                    <span class="inline-block px-4 py-1.5 bg-frank-100 text-frank-700 rounded-full text-sm font-medium">
+                        MCP Server v0.4
+                    </span>
+                </div>
+                <h1 class="text-5xl sm:text-7xl font-bold mb-6">
+                    Hi, I'm <span class="gradient-text">Frank</span>
+                </h1>
+                <p class="text-2xl sm:text-3xl text-gray-600 mb-4">
+                    Your OP_CAT AI Instructor
+                </p>
+                <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-10">
+                    I know everything about building on Fractal Bitcoin with OP_CAT.
+                    I'm an MCP server your AI connects to.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="https://github.com/bitbragi/frank-mcp"
+                       class="inline-flex items-center px-8 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                        </svg>
+                        View on GitHub
+                    </a>
+                    <a href="#quickstart"
+                       class="inline-flex items-center px-8 py-3 bg-frank-500 text-white rounded-lg font-medium hover:bg-frank-600 transition-colors">
+                        Get Started
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is Frank -->
+    <section class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">What is Frank?</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Frank is a Model Context Protocol (MCP) server that gives AI assistants
+                    deep knowledge of Fractal Bitcoin development.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-frank-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-frank-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Instant Knowledge</h3>
+                    <p class="text-gray-600">
+                        Connect any AI to Fractal Bitcoin development tools and best practices instantly.
+                    </p>
+                </div>
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-fractal-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-fractal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">OP_CAT Covenants</h3>
+                    <p class="text-gray-600">
+                        Generate production-ready covenant contracts using OP_CAT on Fractal.
+                    </p>
+                </div>
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Self-Improving</h3>
+                    <p class="text-gray-600">
+                        Frank learns from interactions and can propose improvements to itself.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Available Tools</h2>
+                <p class="text-lg text-gray-600">Everything you need to build on Fractal Bitcoin</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Fractal RPC -->
+                <div class="tool-card bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-fractal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-fractal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Fractal Bitcoin RPC</h3>
+                            <p class="text-gray-600 text-sm mb-3">
+                                Full node access: blocks, transactions, mempool, UTXOs, fee estimation, and more.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">fractal_get_block_height</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">fractal_send_raw_transaction</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">fractal_list_unspent</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- sCrypt -->
+                <div class="tool-card bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">sCrypt-TS Development</h3>
+                            <p class="text-gray-600 text-sm mb-3">
+                                Scaffold, compile, and test smart contracts with advanced templates.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">scrypt_create_project</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">scrypt_compile</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">scrypt_create_advanced_contract</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAT-721 -->
+                <div class="tool-card bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">CAT-721 NFTs</h3>
+                            <p class="text-gray-600 text-sm mb-3">
+                                Generate NFT collections with traits, royalties, and reveal mechanics.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">cat_scaffold_721</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">cat_scaffold_721_advanced</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ScribeMaster -->
+                <div class="tool-card bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-frank-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-frank-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">ScribeMaster Covenants</h3>
+                            <p class="text-gray-600 text-sm mb-3">
+                                Generate stateful covenants: vaults, atomic swaps, tokens, crowdfunding.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">scribe_scaffold_master</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">vault</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">atomic-swap</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="quickstart" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Quick Start</h2>
+                <p class="text-lg text-gray-600">Get Frank running in under a minute</p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-gray-900 rounded-xl overflow-hidden">
+                    <div class="flex items-center gap-2 px-4 py-3 bg-gray-800">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2 text-gray-400 text-sm">Terminal</span>
+                    </div>
+                    <div class="p-6">
+                        <pre class="text-gray-300 text-sm leading-relaxed"><code><span class="text-gray-500"># Clone and setup</span>
+git clone https://github.com/bitbragi/frank-mcp.git
+cd frank-mcp
+python -m venv venv
+source venv/bin/activate
+pip install fastmcp httpx python-dotenv
+
+<span class="text-gray-500"># Add to Claude Code</span>
+claude mcp add frank -- ~/frank-mcp/venv/bin/python ~/frank-mcp/frank_mcp.py
+
+<span class="text-gray-500"># Test it</span>
+<span class="text-green-400">→</span> ping()
+<span class="text-blue-400">pong @ 2024-01-15T10:30:00Z (frank-mcp v0.4)</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scribe Protocol -->
+    <section class="py-20 bg-gradient-to-br from-frank-50 to-fractal-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-frank-100 text-frank-700 rounded-full text-sm font-medium mb-4">
+                        Covenant Edition
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-4">Scribe Protocol</h2>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Frank powers the Scribe Protocol — programmable digital rights on Bitcoin.
+                        Create masters, issue licenses, and distribute revenue using OP_CAT covenants.
+                    </p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Covenant-native ownership</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Programmable licensing</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Automatic royalty distribution</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>No trusted third parties</span>
+                        </li>
+                    </ul>
+                    <a href="https://github.com/bitbragi/frank-mcp/blob/main/SCRIBE_COVENANT_EDITION_SPEC.md"
+                       class="inline-flex items-center text-frank-600 font-medium hover:text-frank-700">
+                        Read the Spec
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="text-sm font-mono text-gray-600 mb-4">// Master Covenant</div>
+                    <pre class="text-sm text-gray-800 leading-relaxed"><code>class ScribeMaster extends SmartContract {
+    @prop()
+    readonly sid: Sha256
+
+    @prop(true)
+    owner: PubKey
+
+    @method()
+    public transfer(newOwner: PubKey, sig: Sig) {
+        assert(this.checkSig(sig, this.owner))
+        this.owner = newOwner
+        // Enforce royalty in outputs
+    }
+
+    @method()
+    public issueLicense(type: ByteString, sig: Sig) {
+        assert(this.checkSig(sig, this.owner))
+        // Create license covenant
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-gray-900 text-gray-400">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold text-white">Frank</span>
+                    <span class="text-gray-500">MCP</span>
+                </div>
+                <div class="flex gap-6">
+                    <a href="https://github.com/bitbragi/frank-mcp" class="hover:text-white transition-colors">GitHub</a>
+                    <a href="https://fractalbitcoin.io" class="hover:text-white transition-colors">Fractal Bitcoin</a>
+                    <a href="https://scrypt.io" class="hover:text-white transition-colors">sCrypt</a>
+                </div>
+                <div class="text-sm">
+                    Built for Fractal Bitcoin
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
