@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  frank-web:
+    build: .
+    container_name: frank-web
+    restart: unless-stopped
+    networks:
+      - caddy-net
+    labels:
+      - "caddy=frank.scribe.spot"
+      - "caddy.reverse_proxy={{upstreams 80}}"
+
+networks:
+  caddy-net:
+    external: true
