@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>Frank — Your OP_CAT AI Instructor | Fractal Bitcoin</title>
-    <meta name="description" content="Frank is the AI-powered MCP server for building covenants on Fractal Bitcoin. Powers the Scribe Protocol for programmable digital rights.">
-    <meta property="og:title" content="Frank — Your OP_CAT AI Instructor">
-    <meta property="og:description" content="Build covenants on Fractal Bitcoin with AI assistance. Powers the Scribe Protocol.">
+    <title>Frank — General-purpose OP_CAT + sCrypt AI Instructor</title>
+    <meta name="description" content="Frank is the AI-powered MCP server for building covenants and programmable digital assets on Bitcoin forks and OP_CAT-enabled chains. Chain-agnostic. Open source.">
+    <meta property="og:title" content="Frank — General-purpose OP_CAT + sCrypt AI Instructor">
+    <meta property="og:description" content="Build covenants on any Bitcoin fork or OP_CAT-enabled chain with AI assistance — Fractal, Bitamp, your own regtest.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://frank.scribe.spot">
-    <meta property="og:image" content="https://frank.scribe.spot/img/scribe-logo.png">
-    <link rel="icon" href="/img/scribe-logo.png" type="image/png">
-    <link rel="apple-touch-icon" href="/img/scribe-logo.png">
+    <meta property="og:url" content="https://github.com/bitbragi/frank-mcp">
+    <meta property="og:image" content="https://raw.githubusercontent.com/bitbragi/frank-mcp/main/public/img/opcat-mark.svg">
+    <link rel="icon" href="/img/opcat-mark.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/img/opcat-mark.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -346,14 +346,6 @@
         .pulse-dot { animation: pulseDot 2.4s ease-in-out infinite; }
 
         /* ===================== LOGO MARKS ===================== */
-        .logo-scribe {
-            height: 28px; width: auto;
-            display: block;
-            filter: drop-shadow(0 0 12px rgba(241,111,36,.25));
-        }
-        @media (min-width: 768px) {
-            .logo-scribe { height: 32px; }
-        }
         .logo-fractal {
             height: 22px; width: auto;
             display: block;
@@ -531,13 +523,13 @@
                 <a href="/" class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <img src="/img/fractal-logo-white.png" alt="Fractal Bitcoin" class="h-6 sm:h-8 w-auto flex-shrink-0">
                     <span class="font-extrabold text-2xl sm:text-[30px] leading-none">Frank</span>
-                    <span class="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-flame-400/15 text-flame-300 border border-flame-400/25 font-medium ml-1">v0.4</span>
+                    <span class="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-flame-400/15 text-flame-300 border border-flame-400/25 font-medium ml-1">v0.5</span>
                 </a>
 
                 <div class="hidden md:flex items-center gap-9 text-sm">
                     <a href="#features"   class="white-65 hover:text-white transition-colors">Features</a>
                     <a href="#tools"      class="white-65 hover:text-white transition-colors">Tools</a>
-                    <a href="#scribe"     class="white-65 hover:text-white transition-colors">Scribe Protocol</a>
+                    <a href="#companions" class="white-65 hover:text-white transition-colors">Companions</a>
                     <a href="#quickstart" class="white-65 hover:text-white transition-colors">Quick Start</a>
                 </div>
 
@@ -563,7 +555,7 @@
         <div class="container-1200 px-4">
             <a href="#features"   onclick="document.body.classList.remove('menu-open')">Features</a>
             <a href="#tools"      onclick="document.body.classList.remove('menu-open')">Tools</a>
-            <a href="#scribe"     onclick="document.body.classList.remove('menu-open')">Scribe Protocol</a>
+            <a href="#companions" onclick="document.body.classList.remove('menu-open')">Companions</a>
             <a href="#quickstart" onclick="document.body.classList.remove('menu-open')">Quick Start</a>
             <a href="https://github.com/bitbragi/frank-mcp">GitHub</a>
         </div>
@@ -583,13 +575,14 @@
                 </div>
 
                 <p class="display-3 tagline-grad mt-3 sm:mt-4">
-                    Your OP_CAT AI Instructor
+                    Your OP_CAT + sCrypt AI Instructor
                 </p>
 
                 <p class="mt-5 sm:mt-6 text-sm sm:text-base lg:text-lg white-65 max-w-2xl mx-auto px-2 leading-relaxed">
-                    I know everything about building on Fractal Bitcoin with OP_CAT and Scribe Protocol.
-                    Connect me to your AI and start building covenants, smart contracts, plus register inscribed
-                    content to pioneer programmable digital ownership and licensing w/ the Scribe Protocol.
+                    I'm a general-purpose AI instructor for building covenants and programmable digital
+                    assets on Bitcoin forks and OP_CAT-enabled chains. Connect me to your AI and start
+                    building stateful contracts, NFT collections, and covenant primitives — chain-agnostic
+                    by design. Fractal Bitcoin, Bitamp, your own regtest, whatever ships next.
                 </p>
 
                 <div class="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 justify-center px-2 sm:px-0">
@@ -611,12 +604,15 @@
                     <div class="absolute -right-6 -top-6 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
                     <div class="relative">
                         <div class="flex items-center gap-3 mb-3">
-                            <img src="/img/fractal-logo-allwhite.svg" alt="Fractal Bitcoin" class="h-6 sm:h-7 w-auto">
-                            <div class="text-xl sm:text-2xl font-semibold text-white">Frank, the Instructor</div>
+                            <span class="w-9 h-9 rounded-lg bg-flame-400/15 border border-flame-400/30 flex items-center justify-center p-1.5">
+                                <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
+                            </span>
+                            <div class="text-xl sm:text-2xl font-semibold text-white">Frank, the Generalist</div>
                         </div>
                         <p class="text-white/85 text-sm sm:text-base max-w-md leading-relaxed">
-                            An MCP server packed with OP_CAT covenant patterns, sCrypt scaffolding, and full Fractal RPC access.
-                            Frank teaches your AI to build like a Bitcoin covenant native.
+                            An MCP server packed with OP_CAT covenant patterns, sCrypt scaffolding, and
+                            Bitcoin-Core-compatible JSON-RPC. Frank teaches your AI to build like a covenant
+                            native — on any OP_CAT-enabled chain.
                         </p>
                     </div>
                     <div class="relative mt-5 sm:mt-6">
@@ -628,15 +624,16 @@
                     <div class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-white/10 blur-3xl"></div>
                     <div class="relative">
                         <div class="flex items-center gap-3 mb-3">
-                            <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 sm:h-8 w-auto">
-                            <div class="text-xl sm:text-2xl font-semibold text-white">Scribe Protocol — Covenant Edition</div>
+                            <div class="text-xl sm:text-2xl font-semibold text-white">Pair Frank with Brad</div>
                         </div>
                         <p class="text-white/85 text-sm sm:text-base max-w-md leading-relaxed">
-                            Programmable digital rights on Bitcoin. Master covenants, license issuance, and revenue splits — all enforced on-chain.
+                            Frank ships the chain-agnostic primitives. For chain-specific protocols on top —
+                            Bitamp's PID manifests, media safety scanning, on-chain inscription validation —
+                            wire in the companion MCP, Brad. Same client, two specialists.
                         </p>
                     </div>
                     <div class="relative mt-5 sm:mt-6">
-                        <a href="#scribe" class="btn btn-dark text-sm">Read the Spec</a>
+                        <a href="#companions" class="btn btn-dark text-sm">See Companions</a>
                     </div>
                 </div>
 
@@ -664,13 +661,6 @@
 
                 <div class="hidden sm:block w-px h-8 bg-white/10"></div>
 
-                <a href="https://myscribe.org" target="_blank" rel="noopener" class="flex items-center gap-2.5 hover:opacity-100 opacity-80 transition-opacity">
-                    <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 sm:h-8 w-auto">
-                    <span class="font-medium text-sm sm:text-base">MyScribe</span>
-                </a>
-
-                <div class="hidden sm:block w-px h-8 bg-white/10"></div>
-
                 <div class="flex items-center gap-2.5 opacity-80">
                     <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-flame-400/15 border border-flame-400/30 flex items-center justify-center p-1.5">
                         <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
@@ -692,8 +682,8 @@
                     Why <span class="gold-orange-grad inline-block">Frank</span>?
                 </h2>
                 <p class="text-base sm:text-lg white-65 max-w-2xl mx-auto px-2">
-                    Frank bridges the gap between AI assistants and Fractal Bitcoin development —
-                    giving your AI superpowers for covenant construction.
+                    Frank bridges the gap between AI assistants and Bitcoin-fork development —
+                    giving your AI superpowers for covenant construction on any OP_CAT-enabled chain.
                 </p>
             </div>
 
@@ -704,15 +694,15 @@
                         <svg class="w-5 h-5 text-flame-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">OP_CAT Native</h3>
-                    <p class="white-65 text-sm leading-relaxed">Deep expertise in OP_CAT covenant patterns. Generate stateful contracts that were impossible before Fractal.</p>
+                    <p class="white-65 text-sm leading-relaxed">Deep expertise in OP_CAT covenant patterns. Generate stateful contracts that were impossible on legacy Bitcoin script.</p>
                 </div>
                 <!-- 2 -->
                 <div class="surface p-5 sm:p-6 hover-lift">
                     <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/25 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Scribe Protocol</h3>
-                    <p class="white-65 text-sm leading-relaxed">Powers MyScribe's covenant-native digital rights. Masters, licenses, and revenue splits on Bitcoin.</p>
+                    <h3 class="text-lg font-semibold mb-2">Covenant Templates</h3>
+                    <p class="white-65 text-sm leading-relaxed">Six ready-to-build patterns: state machine, time-locked vault, crowdfund, token issuance, inscription wrapper, atomic swap.</p>
                 </div>
                 <!-- 3 -->
                 <div class="surface p-5 sm:p-6 hover-lift">
@@ -728,7 +718,7 @@
                         <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/></svg>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">Full RPC Access</h3>
-                    <p class="white-65 text-sm leading-relaxed">Query blocks, transactions, mempool, UTXOs. Broadcast transactions. Full Fractal node access.</p>
+                    <p class="white-65 text-sm leading-relaxed">Query blocks, transactions, mempool, UTXOs. Broadcast transactions. Works with any Bitcoin-Core-compatible node.</p>
                 </div>
                 <!-- 5 -->
                 <div class="surface p-5 sm:p-6 hover-lift">
@@ -736,7 +726,7 @@
                         <svg class="w-5 h-5 text-flame-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">CAT-721 NFTs</h3>
-                    <p class="white-65 text-sm leading-relaxed">Generate NFT collections with traits, royalties, and reveal mechanics for Fractal Bitcoin.</p>
+                    <p class="white-65 text-sm leading-relaxed">Generate NFT collections with traits, royalties, and reveal mechanics on any OP_CAT-enabled chain.</p>
                 </div>
                 <!-- 6 -->
                 <div class="surface p-5 sm:p-6 hover-lift">
@@ -756,19 +746,19 @@
         <div class="container-1200 px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12 sm:mb-16">
                 <h2 class="display-2 mb-3">30+ Tools</h2>
-                <p class="text-base sm:text-lg white-65">Everything you need to build on Fractal</p>
+                <p class="text-base sm:text-lg white-65">Everything you need to build covenants on OP_CAT-enabled chains</p>
             </div>
 
             <div class="grid sm:grid-cols-2 gap-5 sm:gap-6">
 
                 <div class="surface p-5 sm:p-7">
                     <div class="flex items-center gap-3 mb-5">
-                        <div class="w-11 h-11 rounded-xl bg-flame-400/15 border border-flame-400/25 flex items-center justify-center flex-shrink-0">
-                            <img src="/img/fractal-mark.svg" alt="Fractal Bitcoin" class="w-6 h-6">
+                        <div class="w-11 h-11 rounded-xl bg-flame-400/15 border border-flame-400/25 flex items-center justify-center flex-shrink-0 p-2">
+                            <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
                         </div>
                         <div>
-                            <h3 class="font-semibold">Fractal Bitcoin RPC</h3>
-                            <p class="text-sm white-45">18 tools</p>
+                            <h3 class="font-semibold">Bitcoin-Compatible RPC</h3>
+                            <p class="text-sm white-45">18 tools · works on any fork</p>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
@@ -779,6 +769,7 @@
                         <span class="tool-badge">fractal_decode_script</span>
                         <span class="tool-badge white-45">+13 more</span>
                     </div>
+                    <p class="mt-3 text-[11px] white-45">Tool names keep the <code class="text-flame-300">fractal_</code> prefix for backward compatibility — they talk JSON-RPC to <em>any</em> Bitcoin-Core-compatible node (Fractal, Bitamp, regtest).</p>
                 </div>
 
                 <div class="surface p-5 sm:p-7">
@@ -811,16 +802,16 @@
 
                 <div class="surface p-5 sm:p-7">
                     <div class="flex items-center gap-3 mb-5">
-                        <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/25 flex items-center justify-center overflow-hidden">
-                            <img src="/img/scribe-logo.png" alt="Scribe" class="w-7 h-7 object-contain">
+                        <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/25 flex items-center justify-center p-2">
+                            <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">ScribeMaster Covenants</h3>
-                            <p class="text-sm white-45">6 covenant types</p>
+                            <h3 class="font-semibold">OP_CAT Covenant Templates</h3>
+                            <p class="text-sm white-45">6 covenant types · chain-agnostic</p>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="tool-badge">scribe_scaffold_master</span>
+                        <span class="tool-badge">covenant_scaffold_master</span>
                     </div>
                     <div class="mt-4 pt-4 border-t border-white/[.08]">
                         <p class="text-[11px] white-45 mb-2 uppercase tracking-wider">Covenant Types</p>
@@ -858,105 +849,76 @@
         </div>
     </section>
 
-    <!-- ========================== SCRIBE PROTOCOL ========================== -->
-    <section id="scribe" class="section-pad relative overflow-hidden">
+    <!-- ========================== COMPANIONS ========================== -->
+    <section id="companions" class="section-pad relative overflow-hidden">
         <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gold-400/[.07] rounded-full blur-[140px] -z-0"></div>
         <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-flame-400/[.07] rounded-full blur-[140px] -z-0"></div>
 
         <div class="relative container-1200 px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-                <div>
-                    <div class="inline-flex items-center gap-3 mb-6">
-                        <img src="/img/scribe-logo.png" alt="Scribe" class="h-9 sm:h-11 w-auto">
-                        <div class="text-xs sm:text-sm white-65 uppercase tracking-[.2em]">Covenant Edition</div>
+            <div class="text-center mb-12 sm:mb-16">
+                <div class="inline-flex items-center gap-3 mb-5">
+                    <div class="text-xs sm:text-sm white-65 uppercase tracking-[.2em]">Companion MCPs</div>
+                </div>
+                <h2 class="display-2 mb-4 sm:mb-5">
+                    Frank Ships Primitives. <span class="gold-orange-grad inline-block">Specialists Ship Protocols.</span>
+                </h2>
+                <p class="text-base sm:text-lg white-65 max-w-2xl mx-auto leading-relaxed">
+                    Frank stays chain-agnostic on purpose. Anything chain-specific — rights protocols, media
+                    safety, on-chain inscription validation — lives in a dedicated companion MCP that
+                    composes with Frank at the client level.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-5 sm:gap-6">
+                <div class="surface p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl bg-flame-400/15 border border-flame-400/30 flex items-center justify-center p-2">
+                            <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">Frank — the Generalist</h3>
+                            <p class="text-sm white-45">This repo</p>
+                        </div>
                     </div>
-
-                    <h2 class="display-2 mb-5 sm:mb-6">
-                        Programmable Digital Rights on
-                        <span class="gold-orange-grad inline-block">Bitcoin</span>
-                    </h2>
-
-                    <p class="text-base sm:text-lg white-65 mb-7 sm:mb-8 leading-relaxed">
-                        Frank powers the Scribe Protocol — a covenant-native system for digital ownership,
-                        licensing, and revenue distribution. No trusted third parties. Pure Bitcoin.
+                    <p class="text-sm sm:text-base white-65 leading-relaxed mb-5">
+                        OP_CAT covenants, sCrypt-TS scaffolding, CAT-721 NFT collections, and
+                        Bitcoin-Core-compatible JSON-RPC — for any fork that re-enables <code class="text-flame-300">OP_CAT</code>.
                     </p>
-
-                    <div class="space-y-5 mb-8">
-                        <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-lg bg-flame-400/15 border border-flame-400/25 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4 text-flame-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold mb-1">Master Covenants</h4>
-                                <p class="text-sm white-65">Immutable ownership records with SID (Scribe ID) commitment</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-lg bg-gold-400/15 border border-gold-400/25 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4 text-gold-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold mb-1">License Issuance</h4>
-                                <p class="text-sm white-65">Streaming, download, sync, and master licenses as child covenants</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-lg bg-sky-400/15 border border-sky-400/25 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4 text-sky-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold mb-1">Revenue Splits</h4>
-                                <p class="text-sm white-65">Automatic royalty distribution via covenant enforcement</p>
-                            </div>
-                        </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="tool-badge">covenant_scaffold_master</span>
+                        <span class="tool-badge">scrypt_create_project</span>
+                        <span class="tool-badge">cat_scaffold_721</span>
+                        <span class="tool-badge white-45">+ RPC tools</span>
                     </div>
-
-                    <a href="https://github.com/bitbragi/frank-mcp/blob/main/SCRIBE_COVENANT_EDITION_SPEC.md"
-                       class="inline-flex items-center gap-2 text-flame-500 font-semibold hover:text-gold-400 transition-colors underline underline-offset-4 decoration-flame-500/40">
-                        Read the Full Specification
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
                 </div>
 
-                <div class="code-window">
-                    <div class="code-header">
-                        <div class="code-dot bg-red-500"></div>
-                        <div class="code-dot bg-yellow-500"></div>
-                        <div class="code-dot bg-green-500"></div>
-                        <span class="ml-3 text-xs white-45 font-mono">ScribeMaster.ts</span>
+                <div class="surface p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl bg-gold-400/15 border border-gold-400/30 flex items-center justify-center">
+                            <span class="text-gold-400 font-bold text-lg">B</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">Brad — the Bitamp Specialist</h3>
+                            <p class="text-sm white-45">github.com/bitbragi/brad-bitamp-mcp</p>
+                        </div>
                     </div>
-                    <div class="code-body">
-<pre class="text-zinc-300"><code><span class="text-flame-300">class</span> <span class="text-gold-400">ScribeMaster</span> <span class="text-flame-300">extends</span> <span class="text-sky-400">SmartContract</span> {
-    <span class="white-45">// Immutable Scribe ID</span>
-    <span class="text-gold-400">@prop()</span>
-    <span class="text-flame-300">readonly</span> sid: <span class="text-sky-400">Sha256</span>
-
-    <span class="white-45">// Transferable ownership</span>
-    <span class="text-gold-400">@prop</span>(<span class="text-flame-400">true</span>)
-    owner: <span class="text-sky-400">PubKey</span>
-
-    <span class="text-gold-400">@method()</span>
-    <span class="text-flame-300">public</span> <span class="text-flame-400">transfer</span>(
-        newOwner: <span class="text-sky-400">PubKey</span>,
-        sig: <span class="text-sky-400">Sig</span>
-    ) {
-        <span class="text-gold-400">assert</span>(<span class="text-flame-300">this</span>.checkSig(sig, <span class="text-flame-300">this</span>.owner))
-        <span class="text-flame-300">this</span>.owner = newOwner
-        <span class="white-45">// Royalty enforced in outputs</span>
-    }
-
-    <span class="text-gold-400">@method()</span>
-    <span class="text-flame-300">public</span> <span class="text-flame-400">issueLicense</span>(
-        licenseType: <span class="text-sky-400">ByteString</span>,
-        sig: <span class="text-sky-400">Sig</span>
-    ) {
-        <span class="text-gold-400">assert</span>(<span class="text-flame-300">this</span>.checkSig(sig, <span class="text-flame-300">this</span>.owner))
-        <span class="white-45">// Create license covenant</span>
-    }
-}</code></pre>
+                    <p class="text-sm sm:text-base white-65 leading-relaxed mb-5">
+                        AI guardian for <a href="https://github.com/bitbragi/bitamp-testnet" class="text-flame-400 hover:text-gold-400">Bitamp</a>: safety scanning (AcoustID + NSFW + hash-only CSAM), PID
+                        manifest creation, Bitamp covenant scaffolding, legacy contract migration, and
+                        on-chain inscription validation.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="tool-badge">safety.scan_audio</span>
+                        <span class="tool-badge">pid.build_manifest</span>
+                        <span class="tool-badge">covenant.scaffold</span>
+                        <span class="tool-badge">bitamp_node.validate</span>
                     </div>
                 </div>
             </div>
+
+            <p class="mt-10 text-center text-sm white-45 max-w-xl mx-auto">
+                Run them side-by-side in the same Claude session. They share patterns but don't overlap responsibilities.
+            </p>
         </div>
     </section>
 
@@ -1005,10 +967,10 @@
                             <div class="code-body">
                                 <div class="white-45"># Test the connection</div>
                                 <div class="text-flame-400 mb-2">→ ping()</div>
-                                <div class="white-85 mb-4">pong @ 2024-01-15T10:30:00Z (frank-mcp v0.4)</div>
+                                <div class="white-85 mb-4">pong @ 2026-05-13T10:30:00Z (frank-mcp v0.5)</div>
                                 <div class="white-45"># Create a vault covenant</div>
-                                <div class="text-gold-400">→ scribe_scaffold_master("my-vault", "vault")</div>
-                                <div class="white-85">Scaffolded ScribeMaster vault covenant at ~/scribe-covenants/my-vault</div>
+                                <div class="text-gold-400">→ covenant_scaffold_master("my-vault", "vault")</div>
+                                <div class="white-85">Scaffolded vault covenant at ~/op-cat-covenants/my-vault</div>
                             </div>
                         </div>
                     </div>
@@ -1033,27 +995,32 @@
 
             <div class="flex justify-center mb-8 sm:mb-10">
                 <div class="inline-flex items-center gap-4 sm:gap-5 px-5 sm:px-7 py-3 sm:py-4 rounded-full bg-white/[.04] border border-white/[.08]">
-                    <img src="/img/scribe-logo.png" alt="Scribe" class="h-6 sm:h-7 w-auto">
+                    <span class="w-7 h-7 rounded-md bg-flame-400/15 border border-flame-400/30 flex items-center justify-center p-1.5">
+                        <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
+                    </span>
+                    <span class="font-medium text-sm sm:text-base">OP_CAT</span>
                     <span class="text-white/30">×</span>
-                    <img src="/img/fractal-logo.svg" alt="Fractal Bitcoin" class="h-5 sm:h-6 w-auto">
+                    <img src="/img/scrypt-logo.jpg" alt="sCrypt" class="w-7 h-7 rounded-md border border-white/10">
+                    <span class="font-medium text-sm sm:text-base">sCrypt</span>
                 </div>
             </div>
 
             <h2 class="display-2 mb-5 sm:mb-6">
-                <span class="block">Ready to Build the Future of</span>
-                <span class="gold-orange-grad block">Programmable Permanence on Bitcoin?</span>
+                <span class="block">Build Covenants on</span>
+                <span class="gold-orange-grad block">Any OP_CAT-Enabled Chain.</span>
             </h2>
             <p class="text-base sm:text-lg white-65 mb-8 sm:mb-10 max-w-2xl mx-auto">
-                Frank is open source and ready to help you build covenant-native applications on Fractal Bitcoin.
-                Join the builders shaping programmable Bitcoin.
+                Frank is open source and chain-agnostic. Connect it to any AI client that speaks MCP and
+                start building covenant primitives on whichever Bitcoin fork you target — Fractal, Bitamp,
+                your own regtest, or whatever ships next.
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
                 <a href="https://github.com/bitbragi/frank-mcp" class="btn btn-flame">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
                     Star on GitHub
                 </a>
-                <a href="https://fractalbitcoin.io" target="_blank" rel="noopener" class="btn btn-ghost">
-                    Learn About Fractal
+                <a href="https://github.com/bitbragi/brad-bitamp-mcp" target="_blank" rel="noopener" class="btn btn-ghost">
+                    Meet Brad (Bitamp companion)
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
             </div>
@@ -1066,10 +1033,12 @@
             <div class="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-6">
 
                 <div class="flex items-center gap-3">
-                    <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 w-auto">
+                    <span class="w-7 h-7 rounded-lg bg-flame-400/15 border border-flame-400/30 flex items-center justify-center p-1.5">
+                        <img src="/img/opcat-mark.svg" alt="OP_CAT" class="w-full h-full">
+                    </span>
                     <span class="font-semibold">Frank MCP</span>
                     <span class="white-45 hidden sm:inline">|</span>
-                    <span class="white-65 text-sm hidden sm:inline">Your OP_CAT AI Instructor</span>
+                    <span class="white-65 text-sm hidden sm:inline">OP_CAT + sCrypt AI Instructor</span>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-x-5 sm:gap-x-7 gap-y-3">
@@ -1079,20 +1048,19 @@
                         </span>
                         <span class="text-sm font-medium">GitHub</span>
                     </a>
-                    <a href="https://fractalbitcoin.io" target="_blank" rel="noopener" class="flex items-center opacity-80 hover:opacity-100 transition-opacity">
-                        <img src="/img/fractal-logo.svg" alt="Fractal Bitcoin" class="h-5 w-auto">
+                    <a href="https://github.com/bitbragi/brad-bitamp-mcp" target="_blank" rel="noopener" class="flex items-center gap-2.5 opacity-80 hover:opacity-100 transition-opacity">
+                        <span class="w-7 h-7 rounded-lg bg-gold-400/15 border border-gold-400/30 flex items-center justify-center">
+                            <span class="text-gold-400 font-bold text-sm">B</span>
+                        </span>
+                        <span class="text-sm font-medium">Brad (Bitamp)</span>
                     </a>
                     <a href="https://scrypt.io" target="_blank" rel="noopener" class="flex items-center gap-2.5 opacity-80 hover:opacity-100 transition-opacity">
                         <img src="/img/scrypt-logo.jpg" alt="sCrypt" class="w-7 h-7 rounded-lg object-cover border border-white/10">
                         <span class="text-sm font-medium">sCrypt</span>
                     </a>
-                    <a href="https://myscribe.org" target="_blank" rel="noopener" class="flex items-center gap-2.5 opacity-80 hover:opacity-100 transition-opacity">
-                        <img src="/img/scribe-logo.png" alt="Scribe" class="h-7 w-auto">
-                        <span class="text-sm font-medium">MyScribe</span>
-                    </a>
                 </div>
 
-                <div class="text-xs sm:text-sm white-45">Built for the Bitcoin covenant revolution</div>
+                <div class="text-xs sm:text-sm white-45">Chain-agnostic. Open source. Built for covenants.</div>
             </div>
         </div>
     </footer>

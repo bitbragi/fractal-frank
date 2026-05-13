@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 """
-Frank MCP v0.4 — Your OP_CAT AI Instructor
+Frank MCP v0.5 — General-purpose OP_CAT + sCrypt AI Instructor
 
-Hi, I'm Frank. Your OP_CAT AI Instructor. I know everything about building
-on Fractal Bitcoin with OP_CAT. I'm an MCP server your AI connects to.
+Hi, I'm Frank. I know OP_CAT and sCrypt-TS inside out. I help your AI build
+covenants and programmable digital assets on Bitcoin forks and OP_CAT-enabled
+chains — Fractal, Bitamp, your own regtest, anything Bitcoin-Core-compatible.
 
 Features:
-- Full Fractal Bitcoin RPC integration
+- Bitcoin-Core-compatible JSON-RPC (works for any fork)
 - sCrypt-TS smart contract scaffolding and compilation
 - CAT-721 NFT project generation
-- ScribeMaster covenant templates
+- General covenant templates (state machine, vault, token, atomic swap, ...)
 - Self-improving learning system
+
+For Bitamp-specific tooling (PID manifests, media safety, on-chain inscription
+validation), use the companion MCP "Brad": https://github.com/bitbragi/brad-bitamp-mcp
 """
 from __future__ import annotations
 
@@ -39,24 +43,30 @@ FRACTAL_RPC_URL = os.getenv(
 ).rstrip("/")
 FRACTAL_API_KEY = os.getenv("FRACTAL_API_KEY", "")
 FRACTAL_RPC_NODE_URL = os.getenv("FRACTAL_RPC_NODE_URL", "")
-FRANK_VERSION = "0.4"
+FRANK_VERSION = "0.5"
 
 mcp = FastMCP(
     "frank-mcp",
-    instructions="""Hi, I'm Frank. Your OP_CAT AI Instructor.
+    instructions="""Hi, I'm Frank — a general-purpose OP_CAT + sCrypt AI instructor.
 
-I know everything about building on Fractal Bitcoin with OP_CAT. I'm an MCP server
-your AI connects to for covenant development, sCrypt contracts, CAT-721 NFTs,
-and the Scribe Protocol.
+I help you build covenants and programmable digital assets on Bitcoin forks and
+OP_CAT-enabled chains. I am chain-agnostic by design: I ship the patterns; you
+pick the chain. Fractal Bitcoin, Bitamp, your own regtest, or any future
+Bitcoin-Core-compatible fork — I'll talk to all of them.
 
 Key capabilities:
-- Fractal Bitcoin RPC (blocks, transactions, mempool, UTXOs)
+- Bitcoin-Core-compatible JSON-RPC (blocks, transactions, mempool, UTXOs, fees)
 - sCrypt-TS smart contract scaffolding, compilation, and testing
 - CAT-721 NFT collection generation with traits and royalties
-- ScribeMaster covenant templates (vaults, atomic swaps, tokens, etc.)
+- General covenant templates (state machine, vault, token, atomic swap,
+  inscription wrapper, crowdfund)
 - Self-improving memory system for learning and proposals
 
-Use me to build covenant-native applications on Fractal.""",
+For chain-specific protocols layered on top — Bitamp's PID manifests, media
+safety scanning, on-chain inscription validation — use the companion MCP
+"Brad": https://github.com/bitbragi/brad-bitamp-mcp
+
+Use me to build covenant primitives on any OP_CAT-enabled chain.""",
 )
 
 
@@ -126,17 +136,26 @@ def frank_info() -> str:
     return json.dumps({
         "name": "Frank MCP",
         "version": FRANK_VERSION,
-        "tagline": "Your OP_CAT AI Instructor",
-        "description": "I know everything about building on Fractal Bitcoin with OP_CAT.",
+        "tagline": "General-purpose OP_CAT + sCrypt AI instructor",
+        "description": (
+            "Build covenants and programmable digital assets on any "
+            "Bitcoin fork or OP_CAT-enabled chain — Fractal, Bitamp, "
+            "your own regtest, or whatever ships next."
+        ),
         "capabilities": [
-            "Fractal Bitcoin RPC (full node access)",
+            "Bitcoin-Core-compatible JSON-RPC (any fork)",
             "sCrypt-TS smart contract development",
             "CAT-721 NFT scaffolding",
-            "ScribeMaster covenant generation",
-            "Scribe Protocol support",
+            "General covenant templates (state machine, vault, token, atomic swap, ...)",
             "Self-improving learning system",
         ],
-        "networks": ["fractal-mainnet", "fractal-testnet"],
+        "networks": ["any Bitcoin-Core-compatible OP_CAT-enabled chain"],
+        "companions": {
+            "brad": {
+                "url": "https://github.com/bitbragi/brad-bitamp-mcp",
+                "scope": "Bitamp-specific: PID manifests, media safety, on-chain inscription validation",
+            },
+        },
         "project_dir": str(PROJECT_DIR),
         "learnings_count": len(_read_jsonl(LEARNINGS_PATH)),
         "proposals_count": len(_read_jsonl(PROPOSALS_PATH)),
@@ -970,20 +989,21 @@ def cat_scaffold_721_advanced(
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# SCRIBEMASTER COVENANT GENERATOR
+# COVENANT TEMPLATE GENERATOR
 # ══════════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
-def scribe_scaffold_master(
+def covenant_scaffold_master(
     name: str,
     covenant_type: str = "state-machine",
     target_dir: str = "",
     params: dict | None = None
 ) -> str:
-    """Generate a ScribeMaster covenant project for Fractal Bitcoin.
+    """Generate a stateful OP_CAT covenant project (chain-agnostic).
 
-    ScribeMaster covenants use OP_CAT to create stateful Bitcoin contracts
-    that enforce spending conditions across multiple transactions.
+    Stateful covenants use OP_CAT to enforce spending conditions across
+    multiple transactions on any Bitcoin-Core-compatible OP_CAT-enabled
+    chain (Fractal, Bitamp, your own regtest, etc.).
 
     Args:
         name: Project name
@@ -992,16 +1012,16 @@ def scribe_scaffold_master(
             - "vault": Time-locked vault with recovery
             - "crowdfund": Crowdfunding with refunds
             - "token": Token issuance covenant
-            - "inscription": Ordinals-style inscription
+            - "inscription": Ordinals-style inscription wrapper
             - "atomic-swap": Cross-chain atomic swap
-        target_dir: Target directory (default: ~/scribe-covenants)
+        target_dir: Target directory (default: ~/op-cat-covenants)
         params: Type-specific parameters
     """
-    base = Path(target_dir).expanduser() if target_dir else (Path.home() / "scribe-covenants")
+    base = Path(target_dir).expanduser() if target_dir else (Path.home() / "op-cat-covenants")
     project = base / name
 
     if project.exists():
-        return f"ScribeMaster project already exists: {project}"
+        return f"Covenant project already exists: {project}"
 
     (project / "src" / "covenants").mkdir(parents=True)
     (project / "src" / "lib").mkdir()
@@ -1011,9 +1031,9 @@ def scribe_scaffold_master(
     class_name = "".join(word.capitalize() for word in name.replace("-", "_").split("_"))
 
     pkg = {
-        "name": f"scribe-{name}",
+        "name": f"covenant-{name}",
         "version": "0.1.0",
-        "description": f"ScribeMaster {covenant_type} covenant for Fractal Bitcoin",
+        "description": f"{covenant_type} OP_CAT covenant (chain-agnostic)",
         "scripts": {
             "build": "scrypt-cli compile && tsc",
             "test": "mocha --require ts-node/register 'tests/**/*.test.ts'",
@@ -1089,7 +1109,8 @@ export * from './lib/covenant'
 
     readme = f"""# {name}
 
-A **{covenant_type}** ScribeMaster covenant for Fractal Bitcoin.
+A **{covenant_type}** OP_CAT covenant. Chain-agnostic — deploy on any
+Bitcoin-Core-compatible OP_CAT-enabled fork (Fractal, Bitamp, regtest).
 
 ## Quick Start
 
@@ -1101,11 +1122,12 @@ npm test
 
 ## Powered by Frank MCP
 
-Generated with Frank MCP v{FRANK_VERSION} — Your OP_CAT AI Instructor.
+Generated with Frank MCP v{FRANK_VERSION} — general-purpose OP_CAT + sCrypt
+AI instructor. https://github.com/bitbragi/frank-mcp
 """
     (project / "README.md").write_text(readme)
 
-    return f"Scaffolded ScribeMaster {covenant_type} covenant at {project}"
+    return f"Scaffolded {covenant_type} covenant at {project}"
 
 
 def _gen_state_machine_covenant(class_name: str, params: dict) -> str:
