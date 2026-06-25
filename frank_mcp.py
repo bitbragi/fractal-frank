@@ -12,13 +12,11 @@ Features:
 - CAT-721 NFT project generation
 - General covenant templates (state machine, vault, token, atomic swap, ...)
 - Self-improving learning system
-
-For Bitamp-specific tooling (PID manifests, media safety, on-chain inscription
-validation), use the companion MCP "Brad": https://github.com/bitbragi/brad-bitamp-mcp
 """
 from __future__ import annotations
 
 import hashlib
+import base64
 import json
 import os
 import re
@@ -30,6 +28,9 @@ from typing import Any
 import httpx
 from dotenv import load_dotenv
 from fastmcp import FastMCP
+from embit import script as _embit_script
+from embit.networks import NETWORKS as _EMBIT_NETWORKS
+from embit.transaction import Transaction as _EmbitTx
 
 load_dotenv()
 
@@ -38,15 +39,29 @@ LEARNINGS_PATH = PROJECT_DIR / "learnings.jsonl"
 PROPOSALS_PATH = PROJECT_DIR / "proposals.jsonl"
 TEMPLATES_DIR = PROJECT_DIR / "templates"
 
-FRACTAL_RPC_URL = os.getenv(
-    "FRACTAL_RPC_URL", "https://open-api-fractal-testnet.unisat.io"
-).rstrip("/")
-FRACTAL_API_KEY = os.getenv("FRACTAL_API_KEY", "")
-FRACTAL_RPC_NODE_URL = os.getenv("FRACTAL_RPC_NODE_URL", "")
+# Fractal network selector — drives the UniSat OpenAPI base URL.
+#   mainnet → https://open-api-fractal.unisat.io
+#   testnet → https://open-api-fractal-testnet.unisat.io
+FRACTAL_NETWORK = os.getenv("FRACTAL_NETWORK", "mainnet").strip().lower()
+_UNISAT_FRACTAL_BASES = {
+    "mainnet": "https://open-api-fractal.unisat.io",
+    "testnet": "https://open-api-fractal-testnet.unisat.io",
+}
+UNISAT_FRACTAL_API_BASE = _UNISAT_FRACTAL_BASES.get(
+    FRACTAL_NETWORK, _UNISAT_FRACTAL_BASES["mainnet"]
+)
+# UniSat OpenAPI key (free dev key). NEVER a private key / seed.
+UNISAT_FRACTAL_API_KEY = os.getenv("UNISAT_FRACTAL_API_KEY", "")
+# Optional: a genuine Fractal Bitcoin Core JSON-RPC node endpoint, for the
+# node-only tools routed through _fractal_rpc_call() (broadcast, mempool,
+# network/mining info, block-by-hash, decode, raw-tx construction).
+FRACTAL_NODE_RPC_URL = os.getenv("FRACTAL_NODE_RPC_URL", "")
+# Where new users get a free Fractal API key.
+UNISAT_DEV_CENTER_URL = "https://developer.unisat.io"
 FRANK_VERSION = "0.5"
 
 mcp = FastMCP(
-    "frank-mcp",
+    "fractal-frank",
     instructions="""Hi, I'm Frank — a general-purpose OP_CAT + sCrypt AI instructor.
 
 I help you build covenants and programmable digital assets on Bitcoin forks and
@@ -61,10 +76,6 @@ Key capabilities:
 - General covenant templates (state machine, vault, token, atomic swap,
   inscription wrapper, crowdfund)
 - Self-improving memory system for learning and proposals
-
-For chain-specific protocols layered on top — Bitamp's PID manifests, media
-safety scanning, on-chain inscription validation — use the companion MCP
-"Brad": https://github.com/bitbragi/brad-bitamp-mcp
 
 Use me to build covenant primitives on any OP_CAT-enabled chain.""",
 )
@@ -98,10 +109,161 @@ def _read_jsonl(path: Path) -> list[dict]:
     return entries
 
 
-async def _fractal_rpc_call(method: str, params: list[Any] | None = None) -> dict[str, Any]:
-    """Make a JSON-RPC call to Fractal Bitcoin node."""
-    if not FRACTAL_RPC_NODE_URL:
-        return {"error": "FRACTAL_RPC_NODE_URL not configured in .env"}
+async def _unisat_get(path: str, params: dict | None = None) -> dict[str, Any]:
+    """GET a UniSat Fractal OpenAPI endpoint using the free-key path.
+
+    Single source of UniSat client logic: auth header, base URL (from
+    FRACTAL_NETWORK), HTTP handling, and UniSat envelope checking. Returns
+    {"ok": True, "data": <payload>} or {"ok": False, "error": <friendly msg>}.
+    """
+    if not UNISAT_FRACTAL_API_KEY:
+        return {"ok": False, "error": (
+            "Set UNISAT_FRACTAL_API_KEY in .env — get a free Fractal key at the "
+            f"UniSat Developer Center: {UNISAT_DEV_CENTER_URL}"
+        )}
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {UNISAT_FRACTAL_API_KEY}",
+    }
+    url = f"{UNISAT_FRACTAL_API_BASE}{path}"
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.get(url, headers=headers, params=params)
+            r.raise_for_status()
+            body = r.json()
+    except httpx.HTTPStatusError as exc:
+        sc = exc.response.status_code
+        if sc in (401, 403):
+            return {"ok": False, "error": (
+                f"UniSat rejected the request (HTTP {sc}). Check that "
+                f"UNISAT_FRACTAL_API_KEY is a valid Fractal key from "
+                f"{UNISAT_DEV_CENTER_URL}."
+            )}
+        if sc == 429:
+            return {"ok": False, "error": (
+                "UniSat rate limit hit (HTTP 429) — wait a moment and retry."
+            )}
+        return {"ok": False, "error": f"UniSat HTTP {sc} for {path}."}
+    except httpx.HTTPError as exc:
+        return {"ok": False, "error": f"Network error contacting UniSat ({path}): {exc}"}
+
+    # UniSat envelope: {"code": 0, "msg": "ok", "data": ...}; code!=0 is an error.
+    if isinstance(body, dict) and body.get("code") not in (0, None):
+        return {"ok": False, "error": (
+            f"UniSat API error (code {body.get('code')}): {body.get('msg')}"
+        )}
+    data = body.get("data") if isinstance(body, dict) else body
+    return {"ok": True, "data": data}
+
+
+async def _unisat_post(path: str, payload: dict | None = None) -> dict[str, Any]:
+    """POST to a UniSat Fractal OpenAPI endpoint (writes: broadcast, inscribe).
+
+    Mirrors _unisat_get's auth/base/envelope discipline. Returns
+    {"ok": True, "data": <payload>} or {"ok": False, "error": <friendly msg>}.
+    """
+    if not UNISAT_FRACTAL_API_KEY:
+        return {"ok": False, "error": (
+            "Set UNISAT_FRACTAL_API_KEY in .env — get a free Fractal key at the "
+            f"UniSat Developer Center: {UNISAT_DEV_CENTER_URL}"
+        )}
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {UNISAT_FRACTAL_API_KEY}",
+    }
+    url = f"{UNISAT_FRACTAL_API_BASE}{path}"
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.post(url, headers=headers, json=payload or {})
+            r.raise_for_status()
+            body = r.json()
+    except httpx.HTTPStatusError as exc:
+        sc = exc.response.status_code
+        if sc in (401, 403):
+            return {"ok": False, "error": (
+                f"UniSat rejected the request (HTTP {sc}). Your key may lack access "
+                f"to this endpoint — check the plan/tier at {UNISAT_DEV_CENTER_URL}."
+            )}
+        if sc == 429:
+            return {"ok": False, "error": (
+                "UniSat rate limit hit (HTTP 429) — wait a moment and retry."
+            )}
+        return {"ok": False, "error": f"UniSat HTTP {sc} for {path}."}
+    except httpx.HTTPError as exc:
+        return {"ok": False, "error": f"Network error contacting UniSat ({path}): {exc}"}
+
+    if isinstance(body, dict) and body.get("code") not in (0, None):
+        return {"ok": False, "error": (
+            f"UniSat API error (code {body.get('code')}): {body.get('msg')}"
+        )}
+    data = body.get("data") if isinstance(body, dict) else body
+    return {"ok": True, "data": data}
+
+
+# ── Offline helpers (no network) ──────────────────────────────────────────────
+
+def _embit_network() -> dict:
+    """Pick the embit network table from FRACTAL_NETWORK.
+
+    Fractal mainnet uses Bitcoin-mainnet address encodings (bc / 1 / 3).
+    Testnet HRP is treated best-effort (embit 'test' = tb).
+    """
+    return _EMBIT_NETWORKS["test"] if FRACTAL_NETWORK == "testnet" else _EMBIT_NETWORKS["main"]
+
+
+# Minimal Bitcoin Script opcode names for offline disassembly.
+_OPCODES = {
+    0x00: "OP_0", 0x4c: "OP_PUSHDATA1", 0x4d: "OP_PUSHDATA2", 0x4e: "OP_PUSHDATA4",
+    0x4f: "OP_1NEGATE", 0x61: "OP_NOP", 0x63: "OP_IF", 0x64: "OP_NOTIF",
+    0x67: "OP_ELSE", 0x68: "OP_ENDIF", 0x69: "OP_VERIFY", 0x6a: "OP_RETURN",
+    0x6b: "OP_TOALTSTACK", 0x6c: "OP_FROMALTSTACK", 0x76: "OP_DUP",
+    0x87: "OP_EQUAL", 0x88: "OP_EQUALVERIFY", 0x69: "OP_VERIFY",
+    0xa6: "OP_RIPEMD160", 0xa7: "OP_SHA1", 0xa8: "OP_SHA256",
+    0xa9: "OP_HASH160", 0xaa: "OP_HASH256", 0xac: "OP_CHECKSIG",
+    0xad: "OP_CHECKSIGVERIFY", 0xae: "OP_CHECKMULTISIG", 0xaf: "OP_CHECKMULTISIGVERIFY",
+    0xb1: "OP_CHECKLOCKTIMEVERIFY", 0xb2: "OP_CHECKSEQUENCEVERIFY",
+    0xba: "OP_CHECKSIGADD",
+}
+for _i in range(1, 17):  # OP_1 .. OP_16
+    _OPCODES[0x50 + _i] = f"OP_{_i}"
+
+
+def _disasm_script(raw: bytes) -> str:
+    """Disassemble a Bitcoin script to ASM (offline, no node)."""
+    out: list[str] = []
+    i, n = 0, len(raw)
+    while i < n:
+        op = raw[i]; i += 1
+        if 1 <= op <= 0x4b:  # direct push
+            out.append(raw[i:i + op].hex()); i += op
+        elif op == 0x4c and i < n:  # PUSHDATA1
+            ln = raw[i]; i += 1; out.append(raw[i:i + ln].hex()); i += ln
+        elif op == 0x4d and i + 1 < n:  # PUSHDATA2
+            ln = int.from_bytes(raw[i:i + 2], "little"); i += 2
+            out.append(raw[i:i + ln].hex()); i += ln
+        elif op == 0x4e and i + 3 < n:  # PUSHDATA4
+            ln = int.from_bytes(raw[i:i + 4], "little"); i += 4
+            out.append(raw[i:i + ln].hex()); i += ln
+        else:
+            out.append(_OPCODES.get(op, f"OP_UNKNOWN(0x{op:02x})"))
+    return " ".join(out)
+
+
+async def _fractal_rpc_call(
+    method: str, params: list[Any] | None = None, unisat_hint: str | None = None
+) -> dict[str, Any]:
+    """Make a JSON-RPC call to a Fractal Bitcoin Core node (FRACTAL_NODE_RPC_URL)."""
+    if not FRACTAL_NODE_RPC_URL:
+        msg = (
+            "This tool needs a Fractal Bitcoin Core node. Set FRACTAL_NODE_RPC_URL "
+            "in .env (optional, power-user). Most read-only queries (blockchain "
+            "info, transactions, UTXOs, address balances) work with just the free "
+            "UniSat key, no node required."
+        )
+        if unisat_hint:
+            msg += f" Tip: {unisat_hint}"
+        return {"error": msg}
 
     payload = {
         "jsonrpc": "2.0",
@@ -113,11 +275,18 @@ async def _fractal_rpc_call(method: str, params: list[Any] | None = None) -> dic
 
     try:
         async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.post(FRACTAL_RPC_NODE_URL, json=payload, headers=headers)
+            r = await client.post(FRACTAL_NODE_RPC_URL, json=payload, headers=headers)
             r.raise_for_status()
             return r.json()
     except httpx.HTTPError as exc:
-        return {"error": f"RPC error: {exc}"}
+        msg = (
+            f"Could not reach the Fractal node set in FRACTAL_NODE_RPC_URL "
+            f"({exc.__class__.__name__}). Check the node is running and the URL/auth "
+            f"are correct."
+        )
+        if unisat_hint:
+            msg += f" Or skip the node entirely: {unisat_hint}"
+        return {"error": msg}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -127,7 +296,7 @@ async def _fractal_rpc_call(method: str, params: list[Any] | None = None) -> dic
 @mcp.tool()
 def ping() -> str:
     """Health check. Returns pong + UTC timestamp + Frank version."""
-    return f"pong @ {_now()} (frank-mcp v{FRANK_VERSION})"
+    return f"pong @ {_now()} (fractal-frank v{FRANK_VERSION})"
 
 
 @mcp.tool()
@@ -150,12 +319,6 @@ def frank_info() -> str:
             "Self-improving learning system",
         ],
         "networks": ["any Bitcoin-Core-compatible OP_CAT-enabled chain"],
-        "companions": {
-            "brad": {
-                "url": "https://github.com/bitbragi/brad-bitamp-mcp",
-                "scope": "Bitamp-specific: PID manifests, media safety, on-chain inscription validation",
-            },
-        },
         "project_dir": str(PROJECT_DIR),
         "learnings_count": len(_read_jsonl(LEARNINGS_PATH)),
         "proposals_count": len(_read_jsonl(PROPOSALS_PATH)),
@@ -302,31 +465,36 @@ def get_proposals(area_filter: str = "", pending_only: bool = False, limit: int 
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# FRACTAL BITCOIN RPC (Full Node Access)
+# FRACTAL BITCOIN DATA
+#   Read tools default to UniSat OpenAPI (free key, no node). Node-only tools
+#   (broadcast, mempool, network/mining, block-by-hash, decode, raw-tx build)
+#   require FRACTAL_NODE_RPC_URL.
 # ══════════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
 async def fractal_get_block_height() -> str:
-    """Fetch current Fractal testnet blockchain info (height + tip) via UniSat OpenAPI."""
-    headers: dict[str, str] = {"Accept": "application/json"}
-    if FRACTAL_API_KEY:
-        headers["Authorization"] = f"Bearer {FRACTAL_API_KEY}"
-    url = f"{FRACTAL_RPC_URL}/v1/indexer/blockchain/info"
-    try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url, headers=headers)
-            r.raise_for_status()
-            data = r.json()
-    except httpx.HTTPError as exc:
-        return f"HTTP error contacting Fractal RPC ({url}): {exc}"
-    return json.dumps(data, indent=2, ensure_ascii=False)
+    """Fetch current Fractal blockchain info (height + tip) via UniSat OpenAPI.
+
+    Backend: UniSat (free key). Network selected by FRACTAL_NETWORK (default mainnet).
+    """
+    res = await _unisat_get("/v1/indexer/blockchain/info")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
 async def fractal_get_blockchain_info() -> str:
-    """Get comprehensive blockchain info from Fractal node (getblockchaininfo RPC)."""
-    result = await _fractal_rpc_call("getblockchaininfo")
-    return json.dumps(result, indent=2)
+    """Get Fractal blockchain info (chain, height, tip, headers) via UniSat OpenAPI.
+
+    Backend: UniSat (free key). Network selected by FRACTAL_NETWORK (default mainnet).
+    Note: returns UniSat's indexer fields (chain/blocks/headers/bestBlockHash/...),
+    not the full Bitcoin-Core getblockchaininfo struct (no softfork/size_on_disk).
+    """
+    res = await _unisat_get("/v1/indexer/blockchain/info")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
@@ -345,31 +513,104 @@ async def fractal_get_block_hash(height: int) -> str:
 
 @mcp.tool()
 async def fractal_get_raw_transaction(txid: str, verbose: bool = True) -> str:
-    """Get raw transaction data. verbose=True returns decoded JSON."""
-    result = await _fractal_rpc_call("getrawtransaction", [txid, verbose])
-    return json.dumps(result, indent=2)
+    """Get a Fractal transaction via UniSat OpenAPI.
+
+    Backend: UniSat (free key).
+    - verbose=True  → UniSat indexer summary (txid, nIn/nOut, in/out satoshi,
+      height, confirmations, inscription counts).
+    - verbose=False → raw transaction hex.
+    Note: the verbose summary is UniSat's indexer view, NOT a full Bitcoin-Core
+    vin/vout decode. For a full decode, call this with verbose=False and pass the
+    hex to fractal_decode_raw_transaction (or use a node).
+    """
+    path = f"/v1/indexer/tx/{txid}" if verbose else f"/v1/indexer/rawtx/{txid}"
+    res = await _unisat_get(path)
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
 async def fractal_decode_raw_transaction(hex_string: str) -> str:
-    """Decode a raw transaction hex string without broadcasting."""
-    result = await _fractal_rpc_call("decoderawtransaction", [hex_string])
-    return json.dumps(result, indent=2)
+    """Decode a raw transaction hex into vin/vout/version/locktime (offline, local).
+
+    Backend: local (embit) — no node, no network. Fractal shares Bitcoin's tx
+    format, so a standard decoder applies. Output mirrors Bitcoin-Core
+    decoderawtransaction (txid, version, locktime, vin[], vout[]); vout values are
+    shown in both satoshi and FB. Field note: `vsize`/`weight` are not computed
+    offline here, and scriptPubKey `type` uses embit's classifier (p2tr/p2wpkh/
+    p2pkh/p2sh/p2wsh or "nonstandard").
+    """
+    try:
+        raw = bytes.fromhex(hex_string.strip())
+        tx = _EmbitTx.parse(raw)
+    except Exception as exc:
+        return json.dumps({"error": f"Could not decode transaction hex: {exc}"}, indent=2)
+
+    net = _embit_network()
+    vin = []
+    for inp in tx.vin:
+        wit = []
+        try:
+            wit = [item.hex() for item in inp.witness.items] if inp.witness else []
+        except Exception:
+            wit = []
+        vin.append({
+            "txid": inp.txid[::-1].hex(),
+            "vout": inp.vout,
+            "scriptSig": {"hex": inp.script_sig.data.hex()},
+            "txinwitness": wit,
+            "sequence": inp.sequence,
+        })
+    vout = []
+    for n, o in enumerate(tx.vout):
+        spk = o.script_pubkey
+        try:
+            stype = spk.script_type() or "nonstandard"
+        except Exception:
+            stype = "nonstandard"
+        entry: dict[str, Any] = {
+            "n": n,
+            "value_sat": o.value,
+            "value": o.value / 1e8,
+            "scriptPubKey": {"hex": spk.data.hex(), "type": stype},
+        }
+        try:
+            entry["scriptPubKey"]["address"] = spk.address(net)
+        except Exception:
+            pass
+        vout.append(entry)
+
+    return json.dumps({
+        "txid": tx.txid().hex(),
+        "version": tx.version,
+        "locktime": tx.locktime,
+        "size": len(raw),
+        "vin": vin,
+        "vout": vout,
+    }, indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
 async def fractal_send_raw_transaction(hex_string: str, max_fee_rate: float = 0.10) -> str:
-    """Broadcast a signed raw transaction to the Fractal network.
+    """Broadcast an already-signed raw transaction via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — POST /v1/indexer/local_pushtx. Frank does NOT
+    sign or fund anything; you pass a transaction you signed yourself with your
+    own wallet, and this only relays the finished hex.
 
     Args:
-        hex_string: The signed transaction in hex format
-        max_fee_rate: Maximum fee rate in BTC/kvB (default 0.10)
+        hex_string: The fully-signed transaction in hex
+        max_fee_rate: Ignored on the UniSat path (no client-side fee ceiling);
+            kept for signature compatibility. Set fees when you build the tx.
 
     Returns:
-        Transaction ID if successful, error otherwise
+        The broadcast txid on success, or a clean UniSat error.
     """
-    result = await _fractal_rpc_call("sendrawtransaction", [hex_string, max_fee_rate])
-    return json.dumps(result, indent=2)
+    res = await _unisat_post("/v1/indexer/local_pushtx", {"txHex": hex_string.strip()})
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps({"txid": res["data"]}, indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
@@ -399,61 +640,197 @@ async def fractal_get_raw_mempool(verbose: bool = False) -> str:
 
 @mcp.tool()
 async def fractal_estimate_smart_fee(conf_target: int = 6, estimate_mode: str = "economical") -> str:
-    """Estimate fee rate for confirmation within conf_target blocks.
+    """Get recommended Fractal fee rates (sat/vB) via UniSat OpenAPI.
 
-    Args:
-        conf_target: Target number of blocks for confirmation (1-1008)
-        estimate_mode: "economical" or "conservative"
+    Backend: UniSat (free key) — GET /v1/indexer/fees/recommended. Returns the
+    full tier set (fastestFee / halfHourFee / hourFee / economyFee / minimumFee)
+    plus a `feerate` chosen from conf_target:
+      conf_target<=1 → fastestFee, <=3 → halfHourFee, <=6 → hourFee, else economyFee.
+
+    Note: UniSat reports sat/vB tiers, not Bitcoin-Core's estimatesmartfee
+    {feerate (FB/kvB), blocks}. `estimate_mode` is unused (UniSat has no
+    economical/conservative split).
     """
-    result = await _fractal_rpc_call("estimatesmartfee", [conf_target, estimate_mode])
-    return json.dumps(result, indent=2)
+    res = await _unisat_get("/v1/indexer/fees/recommended")
+    if not res["ok"]:
+        return res["error"]
+    tiers = res["data"] or {}
+    if conf_target <= 1:
+        chosen = tiers.get("fastestFee")
+    elif conf_target <= 3:
+        chosen = tiers.get("halfHourFee")
+    elif conf_target <= 6:
+        chosen = tiers.get("hourFee")
+    else:
+        chosen = tiers.get("economyFee")
+    return json.dumps({
+        "feerate_sat_vb": chosen,
+        "conf_target": conf_target,
+        "tiers": tiers,
+    }, indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
 async def fractal_list_unspent(
     min_conf: int = 1,
     max_conf: int = 9999999,
-    addresses: list[str] | None = None
+    addresses: list[str] | None = None,
+    max_utxos: int = 1000,
 ) -> str:
-    """List unspent transaction outputs (UTXOs).
+    """List UTXOs for one or more addresses via UniSat OpenAPI.
+
+    Backend: UniSat (free key). Requires `addresses` — UniSat has no wallet
+    context, so a wallet-wide listunspent is only possible against a node.
 
     Args:
-        min_conf: Minimum confirmations (default 1)
+        min_conf: Minimum confirmations (computed from the current tip; default 1)
         max_conf: Maximum confirmations
-        addresses: Filter by specific addresses (optional)
+        addresses: One or more Fractal addresses to list UTXOs for (required)
+        max_utxos: Safety cap on total UTXOs fetched across all addresses
+            (default 1000). UniSat paginates; this walks the cursor until the
+            address is exhausted or the cap is hit, then flags `truncated`.
+
+    Each UTXO carries txid/vout/satoshi/address/scriptPk/height/confirmations and
+    any inscriptions.
     """
-    params: list[Any] = [min_conf, max_conf]
-    if addresses:
-        params.append(addresses)
-    result = await _fractal_rpc_call("listunspent", params)
-    return json.dumps(result, indent=2)
+    if not addresses:
+        return (
+            "fractal_list_unspent needs one or more `addresses`. UniSat has no "
+            "wallet context, so a wallet-wide listunspent requires a Fractal node "
+            "(set FRACTAL_NODE_RPC_URL)."
+        )
+    info = await _unisat_get("/v1/indexer/blockchain/info")
+    if not info["ok"]:
+        return info["error"]
+    tip = info["data"]["blocks"]
+
+    PAGE = 100
+    utxos: list[dict[str, Any]] = []
+    truncated: dict[str, int] = {}
+    hit_cap = False
+    for addr in addresses:
+        cursor = 0
+        fetched = 0
+        total = 0
+        while True:
+            if len(utxos) >= max_utxos:
+                hit_cap = True
+                truncated[addr] = total or fetched
+                break
+            res = await _unisat_get(
+                f"/v1/indexer/address/{addr}/utxo-data",
+                params={"cursor": cursor, "size": PAGE},
+            )
+            if not res["ok"]:
+                return res["error"]
+            data = res["data"] or {}
+            total = data.get("total", 0)
+            page = data.get("utxo", [])
+            if not page:
+                break
+            for u in page:
+                h = u.get("height") or 0
+                conf = (tip - h + 1) if h else 0
+                if conf < min_conf or conf > max_conf:
+                    continue
+                utxos.append({
+                    "txid": u.get("txid"),
+                    "vout": u.get("vout"),
+                    "address": u.get("address"),
+                    "satoshi": u.get("satoshi"),
+                    "scriptPk": u.get("scriptPk"),
+                    "height": h,
+                    "confirmations": conf,
+                    "inscriptions": u.get("inscriptions", []),
+                })
+                if len(utxos) >= max_utxos:
+                    break
+            fetched += len(page)
+            cursor += PAGE
+            if fetched >= total:
+                break
+
+    out: dict[str, Any] = {"count": len(utxos), "utxo": utxos}
+    if truncated:
+        out["truncated"] = {
+            "note": f"hit max_utxos={max_utxos} cap; more UTXOs exist. "
+                    f"Raise max_utxos or narrow the confirmation window.",
+            "address_totals": truncated,
+            "cap_hit": hit_cap,
+        }
+    return json.dumps(out, indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
 async def fractal_get_tx_out(txid: str, vout: int, include_mempool: bool = True) -> str:
-    """Get details about an unspent transaction output.
+    """Get details about a transaction output (outpoint) via UniSat OpenAPI.
+
+    Backend: UniSat (free key). Returns satoshi, address, scriptPk/scriptType and
+    spend flags (isSpent/isSpending/isOpInRBF) for the given txid:vout.
 
     Args:
         txid: Transaction ID
         vout: Output index
-        include_mempool: Whether to include mempool (default True)
+        include_mempool: Ignored — UniSat indexes confirmed outputs; spend status
+            is conveyed via the isSpent/isSpending flags in the response.
     """
-    result = await _fractal_rpc_call("gettxout", [txid, vout, include_mempool])
-    return json.dumps(result, indent=2)
+    res = await _unisat_get(f"/v1/indexer/utxo/{txid}/{vout}")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
 async def fractal_get_address_info(address: str) -> str:
-    """Get information about a Bitcoin address."""
-    result = await _fractal_rpc_call("getaddressinfo", [address])
-    return json.dumps(result, indent=2)
+    """Get a Fractal address summary via UniSat OpenAPI.
+
+    Backend: UniSat (free key). Returns confirmed/pending balance (satoshi), UTXO
+    counts, and inscription holdings for the address.
+    Note: this is UniSat's indexer summary, NOT Bitcoin-Core getaddressinfo wallet
+    metadata (no ismine/labels/derivation — those require a node wallet).
+    """
+    res = await _unisat_get(f"/v1/indexer/address/{address}/balance")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
 async def fractal_validate_address(address: str) -> str:
-    """Validate a Bitcoin address and return info about it."""
-    result = await _fractal_rpc_call("validateaddress", [address])
-    return json.dumps(result, indent=2)
+    """Validate a Fractal/Bitcoin address (offline, local).
+
+    Backend: local (embit) — checks encoding + checksum + network and returns the
+    derived scriptPubKey and type. Network comes from FRACTAL_NETWORK: mainnet is
+    validated strictly against the `bc` HRP / mainnet base58 versions; testnet is
+    best-effort (HRP not hard-failed). Output mirrors the useful fields of
+    Bitcoin-Core validateaddress (isvalid, address, scriptPubKey, type); wallet
+    fields (ismine/iswatchonly) are node-only and omitted.
+    """
+    address = address.strip()
+    try:
+        spk = _embit_script.address_to_scriptpubkey(address)
+    except Exception as exc:
+        return json.dumps({"isvalid": False, "address": address,
+                           "reason": str(exc)}, indent=2, ensure_ascii=False)
+    net = _embit_network()
+    try:
+        stype = spk.script_type() or "nonstandard"
+    except Exception:
+        stype = "nonstandard"
+    # Network sanity: re-deriving the address from the spk should round-trip.
+    network_ok = True
+    try:
+        network_ok = spk.address(net) == address
+    except Exception:
+        network_ok = False
+    return json.dumps({
+        "isvalid": True,
+        "address": address,
+        "scriptPubKey": spk.data.hex(),
+        "type": stype,
+        "network": FRACTAL_NETWORK,
+        "network_match": network_ok,
+    }, indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
@@ -472,9 +849,33 @@ async def fractal_get_mining_info() -> str:
 
 @mcp.tool()
 async def fractal_decode_script(hex_script: str) -> str:
-    """Decode a hex-encoded script to human-readable format."""
-    result = await _fractal_rpc_call("decodescript", [hex_script])
-    return json.dumps(result, indent=2)
+    """Decode a hex script into ASM + type + address (offline, local).
+
+    Backend: local (embit + opcode table) — no node. Returns {asm, type, hex,
+    address?}. `type` uses embit's classifier (p2tr/p2wpkh/p2pkh/p2sh/p2wsh or
+    "nonstandard"); `address` is included when the script is a standard payable
+    type for the current FRACTAL_NETWORK. Bitcoin-Core's nested `p2sh`/`segwit`
+    wrapper hints are not reproduced offline.
+    """
+    try:
+        raw = bytes.fromhex(hex_script.strip())
+    except Exception as exc:
+        return json.dumps({"error": f"Invalid script hex: {exc}"}, indent=2)
+    spk = _embit_script.Script(raw)
+    try:
+        stype = spk.script_type() or "nonstandard"
+    except Exception:
+        stype = "nonstandard"
+    out: dict[str, Any] = {
+        "asm": _disasm_script(raw),
+        "type": stype,
+        "hex": raw.hex(),
+    }
+    try:
+        out["address"] = spk.address(_embit_network())
+    except Exception:
+        pass
+    return json.dumps(out, indent=2, ensure_ascii=False)
 
 
 @mcp.tool()
@@ -496,6 +897,220 @@ async def fractal_create_raw_transaction(
     """
     result = await _fractal_rpc_call("createrawtransaction", [inputs, outputs, locktime])
     return json.dumps(result, indent=2)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# FRACTAL ASSETS — INSCRIPTIONS / BRC-20 / RUNES (UniSat OpenAPI, free key)
+#   CAT-20 / CAT-721 are NOT indexed by UniSat on Fractal (no endpoint) — Frank
+#   can scaffold CAT covenants but cannot read CAT token/collection state here.
+# ══════════════════════════════════════════════════════════════════════════════
+
+@mcp.tool()
+async def fractal_get_inscription_info(inscription_id: str) -> str:
+    """Get a single inscription's metadata + content via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v1/indexer/inscription/info/{inscriptionId}.
+    Returns owner address, content type/length/body, number, genesis utxo, and any
+    brc20 payload. `inscription_id` looks like "<txid>i<index>".
+    """
+    res = await _unisat_get(f"/v1/indexer/inscription/info/{inscription_id}")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_address_inscriptions(address: str, cursor: int = 0, size: int = 20) -> str:
+    """List inscriptions held by an address via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v1/indexer/address/{address}/inscription-data.
+    Returns total + a page of inscription UTXOs (cursor/size paginate).
+    """
+    res = await _unisat_get(
+        f"/v1/indexer/address/{address}/inscription-data",
+        params={"cursor": cursor, "size": size},
+    )
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_brc20_info(ticker: str) -> str:
+    """Get BRC-20 token info (supply, minted, holders) via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v1/indexer/brc20/{ticker}/info.
+    """
+    res = await _unisat_get(f"/v1/indexer/brc20/{ticker}/info")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_brc20_holders(ticker: str, start: int = 0, limit: int = 20) -> str:
+    """List BRC-20 holders (ranked by balance) via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v1/indexer/brc20/{ticker}/holders.
+    """
+    res = await _unisat_get(
+        f"/v1/indexer/brc20/{ticker}/holders", params={"start": start, "limit": limit}
+    )
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_address_brc20(
+    address: str, ticker: str | None = None, start: int = 0, limit: int = 20
+) -> str:
+    """Get an address's BRC-20 balances via UniSat OpenAPI.
+
+    Backend: UniSat (free key).
+    - ticker omitted → summary of ALL ticks the address holds
+      (GET /v1/indexer/address/{address}/brc20/summary).
+    - ticker given → detailed balance for that one tick
+      (GET /v1/indexer/address/{address}/brc20/{ticker}/info).
+    """
+    if ticker:
+        res = await _unisat_get(f"/v1/indexer/address/{address}/brc20/{ticker}/info")
+    else:
+        res = await _unisat_get(
+            f"/v1/indexer/address/{address}/brc20/summary",
+            params={"start": start, "limit": limit},
+        )
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_rune_info(runeid: str) -> str:
+    """Get a rune's info (supply, mints, terms, holders) via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v1/indexer/runes/{runeid}/info.
+    `runeid` is the "<block>:<tx>" id (e.g. "1:0").
+    """
+    res = await _unisat_get(f"/v1/indexer/runes/{runeid}/info")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_rune_holders(runeid: str, start: int = 0, limit: int = 20) -> str:
+    """List holders of a rune via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v1/indexer/runes/{runeid}/holders.
+    """
+    res = await _unisat_get(
+        f"/v1/indexer/runes/{runeid}/holders", params={"start": start, "limit": limit}
+    )
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_address_runes(address: str, start: int = 0, limit: int = 20) -> str:
+    """List an address's rune balances via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v1/indexer/address/{address}/runes/balance-list.
+    """
+    res = await _unisat_get(
+        f"/v1/indexer/address/{address}/runes/balance-list",
+        params={"start": start, "limit": limit},
+    )
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# INSCRIBE ORDERS (UniSat OpenAPI) — NO-KEYS: returns PAYMENT INSTRUCTIONS only.
+#   Frank never pays, signs, or funds. The user funds the returned pay-to address
+#   from their own wallet to execute the order.
+# ══════════════════════════════════════════════════════════════════════════════
+
+@mcp.tool()
+async def fractal_create_inscribe_order(
+    text: str,
+    receive_address: str,
+    fee_rate: float,
+    output_value: int = 546,
+    filename: str = "inscription.txt",
+) -> str:
+    """Create a UniSat inscribe order for a text payload (returns PAYMENT INSTRUCTIONS).
+
+    Backend: UniSat (free key) — POST /v2/inscribe/order/create. Frank does NOT
+    pay, sign, or fund anything: it returns an order id plus a pay-to address and
+    amount that YOU fund from your own wallet to execute the inscription. No
+    private keys are ever handled.
+
+    Args:
+        text: The inscription content (UTF-8 text; encoded to a data URL).
+        receive_address: Where the finished inscription is delivered (your address).
+        fee_rate: Network fee rate in sat/vB (see fractal_estimate_smart_fee).
+        output_value: Sats locked in the inscription output (default 546).
+        filename: Logical filename for the payload (default inscription.txt).
+    """
+    data_url = (
+        "data:text/plain;charset=utf-8;base64,"
+        + base64.b64encode(text.encode("utf-8")).decode("ascii")
+    )
+    payload = {
+        "receiveAddress": receive_address,
+        "feeRate": fee_rate,
+        "outputValue": output_value,
+        "files": [{"filename": filename, "dataURL": data_url}],
+    }
+    res = await _unisat_post("/v2/inscribe/order/create", payload)
+    if not res["ok"]:
+        return res["error"]
+    d = res["data"] or {}
+    pay_addr = d.get("payAddress")
+    amount = d.get("amount")
+    return json.dumps({
+        "orderId": d.get("orderId"),
+        "status": d.get("status"),
+        "payAddress": pay_addr,
+        "amount_sat": amount,
+        "receiveAddress": receive_address,
+        "payment_instruction": (
+            f"Send {amount} sat (FB) to {pay_addr} from your own wallet to execute "
+            f"this inscription. fractal-frank does not pay, sign, or fund this — the "
+            f"order stays pending until you fund it, and lapses if you don't."
+        ),
+        "raw": d,
+    }, indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_get_inscribe_order(order_id: str) -> str:
+    """Get the status of a UniSat inscribe order via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v2/inscribe/order/{orderId}. Status moves
+    pending → inscribing → minted (or closed/refunded). Read-only; no funds move.
+    """
+    res = await _unisat_get(f"/v2/inscribe/order/{order_id}")
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
+
+
+@mcp.tool()
+async def fractal_list_inscribe_orders(cursor: int = 0, size: int = 20, sort: str = "desc") -> str:
+    """List inscribe orders created with this API key via UniSat OpenAPI.
+
+    Backend: UniSat (free key) — GET /v2/inscribe/order/list. Read-only.
+    """
+    res = await _unisat_get(
+        "/v2/inscribe/order/list", params={"cursor": cursor, "size": size, "sort": sort}
+    )
+    if not res["ok"]:
+        return res["error"]
+    return json.dumps(res["data"], indent=2, ensure_ascii=False)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1123,7 +1738,7 @@ npm test
 ## Powered by Frank MCP
 
 Generated with Frank MCP v{FRANK_VERSION} — general-purpose OP_CAT + sCrypt
-AI instructor. https://github.com/bitbragi/frank-mcp
+AI instructor. https://github.com/bitbragi/fractal-frank
 """
     (project / "README.md").write_text(readme)
 

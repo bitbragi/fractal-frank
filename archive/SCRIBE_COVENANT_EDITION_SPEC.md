@@ -10,7 +10,6 @@ Scribe Protocol enables programmable digital rights on Bitcoin. The Covenant Edi
 2. **Minimal Trust**: No trusted third parties for ownership or licensing
 3. **Permanent Record**: Immutable on-chain provenance
 4. **Composable**: Masters, licenses, and revenue splits interoperate
-5. **OPNet Optional**: Registry integration available but not required
 
 ## Core Concepts
 
@@ -232,25 +231,6 @@ class ScribeRevenueSplit extends SmartContract {
     }
 }
 ```
-
-## OPNet Integration (Optional)
-
-For interoperability with existing OP721 NFTs, an optional SID registry can be deployed on OPNet:
-
-```typescript
-interface SIDRegistry {
-    register(sid: Sha256, masterOutpoint: Outpoint): void
-    lookup(sid: Sha256): Outpoint | null
-    lookupByOP721(tokenId: bigint): Sha256 | null
-}
-```
-
-This provides:
-- Discovery of Masters by SID
-- Linking existing OP721 NFTs to Scribe Masters
-- Cross-protocol queries
-
-The registry is purely informational — all enforcement remains on-chain via covenants.
 
 ## Content Types
 

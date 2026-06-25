@@ -1,6 +1,6 @@
 # Frank MCP Development Roadmap
 
-Frank is a **general-purpose OP_CAT + sCrypt AI instructor**. The roadmap below tracks the chain-agnostic tooling Frank ships — it deliberately stays out of any one chain's domain-specific protocol (those live in chain-specific companions like [Brad](https://github.com/bitbragi/brad-bitamp-mcp)).
+Frank is a **general-purpose OP_CAT + sCrypt AI instructor**. The roadmap below tracks the chain-agnostic tooling Frank ships — it deliberately stays out of any one chain's domain-specific protocol.
 
 ## Phase 1: Foundation (Complete)
 
@@ -40,7 +40,7 @@ Frank is a **general-purpose OP_CAT + sCrypt AI instructor**. The roadmap below 
   - [x] Inscription covenants
   - [x] Atomic swap covenants
 
-These templates are the *primitives* every chain-specific covenant suite eventually composes. Chain-specific protocols (rights management, media licensing, NFT marketplaces, etc.) belong in companion MCPs, not in Frank.
+These templates are the *primitives* every chain-specific covenant suite eventually composes. Chain-specific protocols (rights management, media licensing, NFT marketplaces, etc.) belong in chain-specific tooling, not in Frank.
 
 ## Phase 4: Self-Improvement Engine
 
@@ -63,7 +63,7 @@ These templates are the *primitives* every chain-specific covenant suite eventua
 ## Architecture
 
 ```
-frank-mcp/
+fractal-frank/
 ├── frank_mcp.py          # Main MCP server
 ├── .env                  # Configuration
 ├── learnings.jsonl       # Persistent learnings
@@ -81,7 +81,7 @@ frank-mcp/
 3. Use `propose_improvement` to suggest changes
 4. Submit a pull request
 
-Keep contributions **chain-agnostic**. If you're building something that only makes sense on one specific chain, it probably belongs in a companion MCP (see [Brad](https://github.com/bitbragi/brad-bitamp-mcp) for the Bitamp pattern), not in Frank.
+Keep contributions **chain-agnostic**. If you're building something that only makes sense on one specific chain, it probably belongs in separate chain-specific tooling, not in Frank.
 
 ## Tech Stack
 

@@ -7,9 +7,10 @@ __pycache__/
 .Python
 *.so
 
-# Environment
-.env
-.env.local
+# Environment / secrets
+.env*
+*.bak
+!.env.example
 
 # Data files
 learnings.jsonl

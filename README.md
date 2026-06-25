@@ -8,57 +8,99 @@ Frank is **chain-agnostic by design**. It ships the patterns; you pick the chain
 
 ## Quick Start
 
+All you need is a **free** UniSat Fractal API key — no node required. Most read
+tools (blockchain info, transactions, UTXOs, address balances) run on the free key.
+
 ```bash
-# Install dependencies
-cd frank-mcp
+# 1. Clone
+git clone https://github.com/bitbragi/fractal-frank.git
+cd fractal-frank
+
+# 2. Virtualenv + dependencies
 python -m venv venv
 source venv/bin/activate
-pip install fastmcp httpx python-dotenv
+pip install -r requirements.txt
 
-# Configure
+# 3. Configure
 cp .env.example .env
-# Edit .env with your node's RPC URL + (optional) UniSat / OpenAPI key
+# 4. Get a free Fractal key at https://developer.unisat.io and paste it into .env:
+#    UNISAT_FRACTAL_API_KEY=...
 
-# Add to Claude Code
-claude mcp add frank -- ~/frank-mcp/venv/bin/python ~/frank-mcp/frank_mcp.py
+# 5. Run (stdio MCP server)
+python frank_mcp.py
+```
 
-# Restart Claude Code
+### Add to an MCP client
+
+**Claude Code (one-liner):**
+
+```bash
+claude mcp add fractal-frank -- ~/fractal-frank/venv/bin/python ~/fractal-frank/frank_mcp.py
+```
+
+**Any MCP client (JSON config):** the key is supplied via the `.env` file in the
+project directory (loaded automatically), so no secrets go in the client config:
+
+```json
+{
+  "mcpServers": {
+    "fractal-frank": {
+      "command": "/home/you/fractal-frank/venv/bin/python",
+      "args": ["/home/you/fractal-frank/frank_mcp.py"]
+    }
+  }
+}
+```
+
+Prefer to pass config inline instead of `.env`? Add an `env` block:
+
+```json
+"env": { "UNISAT_FRACTAL_API_KEY": "your_key", "FRACTAL_NETWORK": "mainnet" }
 ```
 
 ## What Frank Does
 
-| Category | Tools |
-|----------|-------|
-| **Node RPC** | Block height, transactions, mempool, UTXOs, fee estimation — any Bitcoin-Core-compatible node |
-| **sCrypt-TS** | Project scaffolding, compilation, testing, advanced contract templates |
-| **CAT-721** | NFT collection generation with traits, royalties, reveal mechanics |
-| **Covenant Templates** | State machines, time-locked vaults, atomic swaps, token issuance, crowdfunds, inscription wrappers |
-| **Self-Learning** | Persistent memory, improvement proposals |
+| Category | Tools | Backend |
+|----------|-------|---------|
+| **Fractal data (read)** | Blockchain info, transactions, UTXOs, address balances, fee rates, broadcast | UniSat free key |
+| **Assets (read)** | Inscriptions (by id / by address), BRC-20 (info / holders / address balances), Runes (info / holders / address balances) | UniSat free key |
+| **Inscribe orders** | Create / get / list inscribe orders — returns **payment instructions only**, never handles keys or funds | UniSat free key |
+| **Offline tx tools** | Decode raw transaction, decode script, validate address — pure local compute via `embit` | local |
+| **Fractal node (power-user)** | Mempool, network/mining info, block-by-hash, raw-tx build, testmempoolaccept | `FRACTAL_NODE_RPC_URL` |
+| **sCrypt-TS** | Project scaffolding, compilation, testing, advanced contract templates | local |
+| **CAT-721 / Covenants** | NFT collection + covenant scaffolding (state machines, vaults, swaps, token issuance, crowdfunds, inscription wrappers) | local |
+| **Self-Learning** | Persistent memory, improvement proposals | local |
+
+> **CAT-20 / CAT-721 reads:** Frank can *scaffold* CAT covenants, but UniSat does
+> not index CAT tokens/collections on Fractal (no public endpoint), so there are
+> no CAT read tools. Inscriptions, BRC-20, and Runes are fully covered.
+>
+> **Inscribe orders never touch keys.** `fractal_create_inscribe_order` returns an
+> order id plus a pay-to address and amount; you fund it from your own wallet. The
+> order lapses if unfunded. Frank never pays, signs, or holds a private key.
 
 ## Configuration
 
 Create `.env` in the project root:
 
 ```env
-# Public-API path (any UniSat-style OpenAPI works — Fractal default shown).
-FRACTAL_RPC_URL=https://open-api-fractal-testnet.unisat.io
-FRACTAL_API_KEY=your_api_key
+# Network selector: "mainnet" (default) or "testnet".
+# Picks the UniSat OpenAPI base URL automatically — no host to set by hand.
+FRACTAL_NETWORK=mainnet
 
-# Direct JSON-RPC path. Any Bitcoin Core-compatible node — Fractal, Bitamp,
-# regtest, etc. — works here. Includes basic-auth in the URL if needed.
-FRACTAL_RPC_NODE_URL=http://user:pass@localhost:8332
+# UniSat OpenAPI key (free dev key from the UniSat Developer Center).
+# A public API key — NOT a private key or seed. Frank never handles those.
+UNISAT_FRACTAL_API_KEY=your_unisat_fractal_api_key_here
+
+# Optional direct JSON-RPC path to a Fractal Bitcoin Core node, for the advanced
+# getblockchaininfo-style tools. Any Bitcoin Core-compatible node works; include
+# basic-auth in the URL if needed. Leave blank if you don't run a node.
+FRACTAL_NODE_RPC_URL=http://user:pass@localhost:8332
 ```
 
-The env-var names start with `FRACTAL_` for backward compatibility with earlier Frank deployments. They are not Fractal-specific — point them at *any* Bitcoin-Core-compatible RPC.
-
-## Companion Projects
-
-Frank is one half of a two-companion setup designed to keep responsibilities clean:
-
-- **Frank (this repo)** — the *generalist*. Knows OP_CAT, sCrypt-TS, and covenant patterns across any Bitcoin fork.
-- **[Brad](https://github.com/bitbragi/brad-bitamp-mcp)** — the *specialist*. AI guardian for the [Bitamp](https://github.com/bitbragi/bitamp-testnet) chain in particular: safety scanning (AcoustID + NSFW + hash-only CSAM), PID manifest creation, Bitamp covenant scaffolding, legacy contract migration, and on-chain inscription validation.
-
-If you're building a one-off covenant or teaching yourself OP_CAT, use Frank. If you're publishing audio/video on Bitamp specifically, use Brad. They share patterns but don't overlap responsibilities.
+`FRACTAL_NETWORK` resolves to `https://open-api-fractal.unisat.io` (mainnet) or
+`https://open-api-fractal-testnet.unisat.io` (testnet). The optional
+`FRACTAL_NODE_RPC_URL` is the only place a node endpoint is configured.
 
 ## Archive
 

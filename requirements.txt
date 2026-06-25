@@ -1,0 +1,6 @@
+# fractal-frank runtime dependencies (pinned to tested versions).
+# fastmcp pulls in the MCP SDK; embit powers the offline tx/script/address tools.
+fastmcp==3.4.2
+httpx==0.28.1
+python-dotenv==1.2.2
+embit==0.8.0
